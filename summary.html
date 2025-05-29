@@ -1,0 +1,1102 @@
+<!doctype html><html><head><meta charset="utf-8">
+<title>SPARQL Result Comparison</title>
+<style>
+ body{font-family:sans-serif;margin:2rem;}
+ table{border-collapse:collapse;width:100%;}
+ th,td{border:1px solid #aaa;padding:4px 8px;text-align:center;vertical-align:top;}
+ th{background:#eee;}
+ td.label{text-align:left;cursor:pointer;}
+ td.pass{color:green;font-weight:bold;}
+ td.fail{color:red;font-weight:bold;cursor:pointer;}
+ .flex {display:none;gap:1rem;}
+ pre{white-space:pre-wrap;background:#f8f8f8;margin:4px 0 0;padding:4px;
+      border:1px solid #ddd;max-height:300px;overflow:auto;}
+</style></head><body>
+<h1>SPARQL Result Comparison</h1>
+<table id="tbl"><thead><tr><th>Test (query | expected)</th><th>dydra.com</th><th>dydra.com.sparql</th></tr></thead><tbody><tr><td class="label toggle" data-id="b0">SPARQL-exists/tests/exists-1-empty-bgp/exists-empty-bgp-01.rq
+             <div id="b0" class="flex">
+               <pre>PREFIX : &lt;http://example/&gt;
+
+SELECT *
+FROM &lt;http://www.w3c.org/exists-1-empty-bgp/data&gt;
+{ 
+   FILTER EXISTS { SELECT ?y { ?y :p :o } }
+}
+</pre>
+               <pre>{ &quot;head&quot;: {
+    &quot;vars&quot;: [  ]
+  } ,
+  &quot;results&quot;: {
+    &quot;bindings&quot;: [
+      { 
+      }
+    ]
+  }
+}
+</pre>
+             </div></td><td class="pass">✔</td><td class="pass">✔</td></tr><tr><td class="label toggle" data-id="b1">SPARQL-exists/tests/exists-1-empty-bgp/exists-empty-bgp-02.rq
+             <div id="b1" class="flex">
+               <pre>PREFIX : &lt;http://example/&gt;
+
+SELECT *
+FROM &lt;http://www.w3c.org/exists-1-empty-bgp/data&gt;
+{
+
+   FILTER EXISTS { VALUES ?y { 123 } }
+}
+</pre>
+               <pre>{ &quot;head&quot;: {
+    &quot;vars&quot;: [  ]
+  } ,
+  &quot;results&quot;: {
+    &quot;bindings&quot;: [
+      { 
+      }
+    ]
+  }
+}
+</pre>
+             </div></td><td class="fail toggle" data-id="p2">✘
+                 <pre id="p2" style="display:none">{ &quot;head&quot;: { &quot;vars&quot;: [ ] },
+   &quot;results&quot;: {
+   &quot;bindings&quot;: [ ] } }
+</pre></td><td class="fail toggle" data-id="p3">✘
+                 <pre id="p3" style="display:none">{ &quot;head&quot;: { &quot;vars&quot;: [ ] },
+   &quot;results&quot;: {
+   &quot;bindings&quot;: [ ] } }
+</pre></td></tr><tr><td class="label toggle" data-id="b4">SPARQL-exists/tests/exists-3-bgp/exists-bgp-A1.rq
+             <div id="b4" class="flex">
+               <pre>PREFIX : &lt;http://example/&gt;
+
+SELECT ?x
+FROM &lt;http://www.w3c.org/exists-3-bgp/data1&gt;
+WHERE {
+    ?x :p :d .
+    FILTER EXISTS { ?x :q :b . }
+}
+</pre>
+               <pre>{ &quot;head&quot;: {
+    &quot;vars&quot;: [ &quot;x&quot; ]
+  } ,
+  &quot;results&quot;: {
+    &quot;bindings&quot;: [
+      
+    ]
+  }
+}
+</pre>
+             </div></td><td class="pass">✔</td><td class="pass">✔</td></tr><tr><td class="label toggle" data-id="b5">SPARQL-exists/tests/exists-3-bgp/exists-bgp-A2.rq
+             <div id="b5" class="flex">
+               <pre>PREFIX : &lt;http://example/&gt;
+
+SELECT ?x
+FROM &lt;http://www.w3c.org/exists-3-bgp/data2&gt;
+WHERE {
+    ?x :p :d .
+    FILTER EXISTS { ?x :q :b . }
+}
+</pre>
+               <pre>{ &quot;head&quot;: {
+    &quot;vars&quot;: [ &quot;x&quot; ]
+  } ,
+  &quot;results&quot;: {
+    &quot;bindings&quot;: [
+      { 
+        &quot;x&quot;: { &quot;type&quot;: &quot;bnode&quot; , &quot;value&quot;: &quot;b0&quot; }
+      }
+    ]
+  }
+}
+</pre>
+             </div></td><td class="fail toggle" data-id="p6">✘
+                 <pre id="p6" style="display:none">{ &quot;head&quot;: { &quot;vars&quot;: [ &quot;x&quot; ] },
+   &quot;results&quot;: {
+   &quot;bindings&quot;: [
+ { &quot;x&quot;: {&quot;type&quot;:&quot;bnode&quot;, &quot;value&quot;:&quot;c&quot;} } ] } }
+</pre></td><td class="fail toggle" data-id="p7">✘
+                 <pre id="p7" style="display:none">{ &quot;head&quot;: { &quot;vars&quot;: [ &quot;x&quot; ] },
+   &quot;results&quot;: {
+   &quot;bindings&quot;: [
+ { &quot;x&quot;: {&quot;type&quot;:&quot;bnode&quot;, &quot;value&quot;:&quot;c&quot;} } ] } }
+</pre></td></tr><tr><td class="label toggle" data-id="b8">SPARQL-exists/tests/exists-4-minus/exists-minus-01.rq
+             <div id="b8" class="flex">
+               <pre>PREFIX : &lt;http://example/&gt;
+
+SELECT ?x
+FROM &lt;http://www.w3c.org/exists-4-minus/data&gt;
+WHERE {
+    ?x :p :c .
+    FILTER EXISTS { ?x :p :c . MINUS { ?x :p :c . } }
+}
+</pre>
+               <pre>{ &quot;head&quot;: {
+    &quot;vars&quot;: [ &quot;x&quot; ]
+  } ,
+  &quot;results&quot;: {
+    &quot;bindings&quot;: [
+    ]
+  }
+}
+</pre>
+             </div></td><td class="pass">✔</td><td class="pass">✔</td></tr><tr><td class="label toggle" data-id="b9">SPARQL-exists/tests/exists-5-scope/exists-subselect-hidden.rq
+             <div id="b9" class="flex">
+               <pre>PREFIX : &lt;http://example/&gt;
+
+SELECT *
+FROM &lt;http://www.w3c.org/exists-5-scope/data&gt;
+{
+   :s :p1 ?o .
+   FILTER EXISTS {SELECT ?s WHERE { ?s ?o ?o2 }}
+}
+</pre>
+               <pre>{ &quot;head&quot;: {
+  &quot;vars&quot;: [ &quot;o&quot; ]
+} ,
+  &quot;results&quot;: {
+    &quot;bindings&quot;: [
+      {
+        &quot;o&quot;: { &quot;type&quot;: &quot;literal&quot; , &quot;value&quot;: &quot;0&quot;, &quot;datatype&quot;: &quot;http://www.w3.org/2001/XMLSchema#integer&quot; }
+      },
+      {
+        &quot;o&quot;: { &quot;type&quot;: &quot;literal&quot; , &quot;value&quot;: &quot;1&quot;, &quot;datatype&quot;: &quot;http://www.w3.org/2001/XMLSchema#integer&quot; }
+      }
+    ]
+  }
+}
+</pre>
+             </div></td><td class="fail toggle" data-id="p10">✘
+                 <pre id="p10" style="display:none">{ &quot;head&quot;: { &quot;vars&quot;: [ &quot;o&quot; ] },
+   &quot;results&quot;: {
+   &quot;bindings&quot;: [
+ { &quot;o&quot;: {&quot;type&quot;:&quot;literal&quot;, &quot;datatype&quot;:&quot;http://www.w3.org/2001/XMLSchema#integer&quot;, &quot;value&quot;:&quot;1&quot;} },
+ { &quot;o&quot;: {&quot;type&quot;:&quot;literal&quot;, &quot;datatype&quot;:&quot;http://www.w3.org/2001/XMLSchema#integer&quot;, &quot;value&quot;:&quot;0&quot;} } ] } }
+</pre></td><td class="fail toggle" data-id="p11">✘
+                 <pre id="p11" style="display:none">{ &quot;head&quot;: { &quot;vars&quot;: [ &quot;o&quot; ] },
+   &quot;results&quot;: {
+   &quot;bindings&quot;: [
+ { &quot;o&quot;: {&quot;type&quot;:&quot;literal&quot;, &quot;datatype&quot;:&quot;http://www.w3.org/2001/XMLSchema#integer&quot;, &quot;value&quot;:&quot;1&quot;} },
+ { &quot;o&quot;: {&quot;type&quot;:&quot;literal&quot;, &quot;datatype&quot;:&quot;http://www.w3.org/2001/XMLSchema#integer&quot;, &quot;value&quot;:&quot;0&quot;} } ] } }
+</pre></td></tr><tr><td class="label toggle" data-id="b12">SPARQL-exists/tests/exists-5-scope/exists-subselect-no-projection.rq
+             <div id="b12" class="flex">
+               <pre>PREFIX : &lt;http://example/&gt;
+
+SELECT *
+FROM &lt;http://www.w3c.org/exists-5-scope/data&gt;
+{
+   :s :p1 ?o .
+   FILTER EXISTS {SELECT ?o WHERE { :s :p1 ?o }}
+}
+</pre>
+               <pre>{ &quot;head&quot;: {
+  &quot;vars&quot;: [ &quot;o&quot; ]
+} ,
+  &quot;results&quot;: {
+    &quot;bindings&quot;: [
+      {
+        &quot;o&quot;: { &quot;type&quot;: &quot;literal&quot; , &quot;value&quot;: &quot;0&quot;, &quot;datatype&quot;: &quot;http://www.w3.org/2001/XMLSchema#integer&quot; }
+      },
+      {
+        &quot;o&quot;: { &quot;type&quot;: &quot;literal&quot; , &quot;value&quot;: &quot;1&quot;, &quot;datatype&quot;: &quot;http://www.w3.org/2001/XMLSchema#integer&quot; }
+      }
+    ]
+  }
+}
+</pre>
+             </div></td><td class="fail toggle" data-id="p13">✘
+                 <pre id="p13" style="display:none">{ &quot;head&quot;: { &quot;vars&quot;: [ &quot;o&quot; ] },
+   &quot;results&quot;: {
+   &quot;bindings&quot;: [
+ { &quot;o&quot;: {&quot;type&quot;:&quot;literal&quot;, &quot;datatype&quot;:&quot;http://www.w3.org/2001/XMLSchema#integer&quot;, &quot;value&quot;:&quot;1&quot;} },
+ { &quot;o&quot;: {&quot;type&quot;:&quot;literal&quot;, &quot;datatype&quot;:&quot;http://www.w3.org/2001/XMLSchema#integer&quot;, &quot;value&quot;:&quot;0&quot;} } ] } }
+</pre></td><td class="fail toggle" data-id="p14">✘
+                 <pre id="p14" style="display:none">{ &quot;head&quot;: { &quot;vars&quot;: [ &quot;o&quot; ] },
+   &quot;results&quot;: {
+   &quot;bindings&quot;: [
+ { &quot;o&quot;: {&quot;type&quot;:&quot;literal&quot;, &quot;datatype&quot;:&quot;http://www.w3.org/2001/XMLSchema#integer&quot;, &quot;value&quot;:&quot;1&quot;} },
+ { &quot;o&quot;: {&quot;type&quot;:&quot;literal&quot;, &quot;datatype&quot;:&quot;http://www.w3.org/2001/XMLSchema#integer&quot;, &quot;value&quot;:&quot;0&quot;} } ] } }
+</pre></td></tr><tr><td class="label toggle" data-id="b15">SPARQL-exists/tests/exists-bnodes/exists-bnode-01.rq
+             <div id="b15" class="flex">
+               <pre>PREFIX : &lt;http://example/&gt;
+
+SELECT *
+FROM &lt;http://www.w3c.org/exists-bnodes/data1&gt;
+{
+   :s :p1 ?o .
+   FILTER EXISTS { :s :p2 ?o }
+}
+
+</pre>
+               <pre>{ &quot;head&quot;: {
+    &quot;vars&quot;: [ &quot;o&quot; ]
+  } ,
+  &quot;results&quot;: {
+    &quot;bindings&quot;: [
+      
+    ]
+  }
+}
+</pre>
+             </div></td><td class="pass">✔</td><td class="pass">✔</td></tr><tr><td class="label toggle" data-id="b16">SPARQL-exists/tests/exists-bnodes/exists-bnode-02.rq
+             <div id="b16" class="flex">
+               <pre>PREFIX : &lt;http://example/&gt;
+
+SELECT *
+FROM &lt;http://www.w3c.org/exists-bnodes/data2&gt;
+{
+   :s :p1 ?o .
+   FILTER EXISTS { :s :p2 ?o }
+}
+
+</pre>
+               <pre>{ &quot;head&quot;: {
+    &quot;vars&quot;: [ &quot;o&quot; ]
+  } ,
+  &quot;results&quot;: {
+    &quot;bindings&quot;: [
+      { 
+        &quot;o&quot;: { &quot;type&quot;: &quot;bnode&quot; , &quot;value&quot;: &quot;b0&quot; }
+      }
+    ]
+  }
+}
+</pre>
+             </div></td><td class="pass">✔</td><td class="pass">✔</td></tr><tr><td class="label toggle" data-id="b17">SPARQL-exists/tests/exists-filter/exists-filter-01.rq
+             <div id="b17" class="flex">
+               <pre>SELECT ?v
+FROM &lt;http://www.w3c.org/exists-filter/empty&gt;
+WHERE {
+  BIND ( &lt;ex:a&gt; AS ?v )
+  FILTER EXISTS {
+    FILTER (?v = &lt;ex:a&gt;)
+  }
+}
+
+</pre>
+               <pre>{ &quot;head&quot;: {
+    &quot;vars&quot;: [ &quot;v&quot; ]
+  } ,
+  &quot;results&quot;: {
+    &quot;bindings&quot;: [
+      { 
+        &quot;v&quot;: { &quot;type&quot;: &quot;uri&quot; , &quot;value&quot;: &quot;ex:a&quot; }
+      }
+    ]
+  }
+}
+</pre>
+             </div></td><td class="pass">✔</td><td class="pass">✔</td></tr><tr><td class="label toggle" data-id="b18">SPARQL-exists/tests/exists-filter/exists-filter-02.rq
+             <div id="b18" class="flex">
+               <pre>SELECT ?v
+FROM &lt;http://www.w3c.org/exists-filter/empty&gt;
+WHERE {
+  BIND ( &lt;ex:a&gt; AS ?v )
+  FILTER EXISTS {
+     SELECT * WHERE {
+        FILTER (?v = &lt;ex:a&gt;)
+  } }
+}
+
+</pre>
+               <pre>{ &quot;head&quot;: {
+    &quot;vars&quot;: [ &quot;v&quot; ]
+  } ,
+  &quot;results&quot;: {
+    &quot;bindings&quot;: [
+      { 
+        &quot;v&quot;: { &quot;type&quot;: &quot;uri&quot; , &quot;value&quot;: &quot;ex:a&quot; }
+      }
+    ]
+  }
+}
+</pre>
+             </div></td><td class="pass">✔</td><td class="pass">✔</td></tr><tr><td class="label toggle" data-id="b19">SPARQL-exists/tests/exists-filter/exists-filter-03.rq
+             <div id="b19" class="flex">
+               <pre>SELECT ?v
+FROM &lt;http://www.w3c.org/exists-filter/empty&gt;
+WHERE {
+  BIND ( &lt;ex:a&gt; AS ?v )
+  FILTER EXISTS {
+     SELECT ?v WHERE {
+        FILTER (?v = &lt;ex:a&gt;)
+  } }
+}
+
+</pre>
+               <pre>{ &quot;head&quot;: {
+    &quot;vars&quot;: [ &quot;v&quot; ]
+  } ,
+  &quot;results&quot;: {
+    &quot;bindings&quot;: [
+      { 
+        &quot;v&quot;: { &quot;type&quot;: &quot;uri&quot; , &quot;value&quot;: &quot;ex:a&quot; }
+      }
+    ]
+  }
+}
+</pre>
+             </div></td><td class="pass">✔</td><td class="pass">✔</td></tr><tr><td class="label toggle" data-id="b20">SPARQL-exists/tests/exists-filter/minus-filter-01.rq
+             <div id="b20" class="flex">
+               <pre>SELECT ?v
+FROM &lt;http://www.w3c.org/exists-filter/data1&gt;
+WHERE {
+  ?v &lt;ex:p&gt; &quot;z&quot;
+  MINUS {
+    FILTER (?v = &lt;ex:a&gt;)
+  }
+}
+
+</pre>
+               <pre>{ &quot;head&quot;: {
+    &quot;vars&quot;: [ &quot;v&quot; ]
+  } ,
+  &quot;results&quot;: {
+    &quot;bindings&quot;: [
+      { 
+        &quot;v&quot;: { &quot;type&quot;: &quot;uri&quot; , &quot;value&quot;: &quot;ex:a&quot; }
+      }
+    ]
+  }
+}
+</pre>
+             </div></td><td class="pass">✔</td><td class="pass">✔</td></tr><tr><td class="label toggle" data-id="b21">SPARQL-exists/tests/exists-filter/minus-filter-02.rq
+             <div id="b21" class="flex">
+               <pre>SELECT ?v
+FROM &lt;http://www.w3c.org/exists-filter/data1&gt;
+WHERE {
+  ?v &lt;ex:p&gt; &quot;z&quot;
+  MINUS {
+     SELECT * WHERE {
+        FILTER (?v = &lt;ex:a&gt;)
+  } }
+}
+
+</pre>
+               <pre>{ &quot;head&quot;: {
+    &quot;vars&quot;: [ &quot;v&quot; ]
+  } ,
+  &quot;results&quot;: {
+    &quot;bindings&quot;: [
+      { 
+        &quot;v&quot;: { &quot;type&quot;: &quot;uri&quot; , &quot;value&quot;: &quot;ex:a&quot; }
+      }
+    ]
+  }
+}
+</pre>
+             </div></td><td class="pass">✔</td><td class="pass">✔</td></tr><tr><td class="label toggle" data-id="b22">SPARQL-exists/tests/exists-filter/minus-filter-03.rq
+             <div id="b22" class="flex">
+               <pre>SELECT ?v
+FROM &lt;http://www.w3c.org/exists-filter/data1&gt;
+WHERE {
+  ?v &lt;ex:p&gt; &quot;z&quot;
+  MINUS {
+     SELECT ?v WHERE {
+        FILTER (?v = &lt;ex:a&gt;)
+  } }
+}
+
+</pre>
+               <pre>{ &quot;head&quot;: {
+    &quot;vars&quot;: [ &quot;v&quot; ]
+  } ,
+  &quot;results&quot;: {
+    &quot;bindings&quot;: [
+      { 
+        &quot;v&quot;: { &quot;type&quot;: &quot;uri&quot; , &quot;value&quot;: &quot;ex:a&quot; }
+      }
+    ]
+  }
+}
+</pre>
+             </div></td><td class="pass">✔</td><td class="pass">✔</td></tr><tr><td class="label toggle" data-id="b23">SPARQL-exists/tests/exists-filter/not-exists-filter-01.rq
+             <div id="b23" class="flex">
+               <pre>SELECT ?v
+FROM &lt;http://www.w3c.org/exists-filter/data1&gt;
+WHERE {
+  ?v &lt;ex:p&gt; &quot;z&quot;
+  FILTER NOT EXISTS {
+    FILTER (?v = &lt;ex:a&gt;)
+  }
+}
+
+</pre>
+               <pre>{ &quot;head&quot;: {
+    &quot;vars&quot;: [ &quot;v&quot; ]
+  } ,
+  &quot;results&quot;: {
+    &quot;bindings&quot;: [
+    ]
+  }
+}
+</pre>
+             </div></td><td class="pass">✔</td><td class="pass">✔</td></tr><tr><td class="label toggle" data-id="b24">SPARQL-exists/tests/exists-filter/not-exists-filter-02.rq
+             <div id="b24" class="flex">
+               <pre>SELECT ?v
+FROM &lt;http://www.w3c.org/exists-filter/data1&gt;
+WHERE {
+  ?v &lt;ex:p&gt; &quot;z&quot;
+  FILTER NOT EXISTS {
+     SELECT * WHERE {
+        FILTER (?v = &lt;ex:a&gt;)
+  } }
+}
+
+</pre>
+               <pre>{ &quot;head&quot;: {
+    &quot;vars&quot;: [ &quot;v&quot; ]
+  } ,
+  &quot;results&quot;: {
+    &quot;bindings&quot;: [
+    ]
+  }
+}
+</pre>
+             </div></td><td class="pass">✔</td><td class="pass">✔</td></tr><tr><td class="label toggle" data-id="b25">SPARQL-exists/tests/exists-filter/not-exists-filter-03.rq
+             <div id="b25" class="flex">
+               <pre>SELECT ?v
+FROM &lt;http://www.w3c.org/exists-filter/data1&gt;
+WHERE {
+  ?v &lt;ex:p&gt; &quot;z&quot;
+  FILTER NOT EXISTS {
+     SELECT ?v WHERE {
+        FILTER (?v = &lt;ex:a&gt;)
+  } }
+}
+
+</pre>
+               <pre>{ &quot;head&quot;: {
+    &quot;vars&quot;: [ &quot;v&quot; ]
+  } ,
+  &quot;results&quot;: {
+    &quot;bindings&quot;: [
+    ]
+  }
+}
+</pre>
+             </div></td><td class="pass">✔</td><td class="pass">✔</td></tr><tr><td class="label toggle" data-id="b26">SPARQL-exists/tests/exists-filter/scope-filter-01.rq
+             <div id="b26" class="flex">
+               <pre>SELECT ?v
+FROM &lt;http://www.w3c.org/exists-filter/empty&gt;
+WHERE {
+  BIND ( &lt;ex:a&gt; AS ?v )
+  FILTER EXISTS {
+     SELECT ?w WHERE {
+        BIND(&lt;ex:b&gt; as ?w)
+        FILTER (?v = &lt;ex:a&gt;)
+  } }
+}
+
+</pre>
+               <pre>{ &quot;head&quot;: {
+    &quot;vars&quot;: [ &quot;v&quot; ]
+  } ,
+  &quot;results&quot;: {
+    &quot;bindings&quot;: [
+    ]
+  }
+}
+</pre>
+             </div></td><td class="fail toggle" data-id="p27">✘
+                 <pre id="p27" style="display:none">{ &quot;head&quot;: { &quot;vars&quot;: [ &quot;v&quot; ] },
+   &quot;results&quot;: {
+   &quot;bindings&quot;: [
+ { &quot;v&quot;: {&quot;type&quot;:&quot;uri&quot;, &quot;value&quot;:&quot;ex:a&quot;} } ] } }
+</pre></td><td class="fail toggle" data-id="p28">✘
+                 <pre id="p28" style="display:none">{ &quot;head&quot;: { &quot;vars&quot;: [ &quot;v&quot; ] },
+   &quot;results&quot;: {
+   &quot;bindings&quot;: [
+ { &quot;v&quot;: {&quot;type&quot;:&quot;uri&quot;, &quot;value&quot;:&quot;ex:a&quot;} } ] } }
+</pre></td></tr><tr><td class="label toggle" data-id="b29">SPARQL-exists/tests/other/exists-pfps/existsBlank01.rq
+             <div id="b29" class="flex">
+               <pre>prefix : &lt;http://www.example.org/&gt;
+
+SELECT ?x
+FROM &lt;http://www.w3c.org/exists-pfps/existsBlank01&gt;
+WHERE {
+  :s :p ?x .
+  FILTER EXISTS { ?x :p _:a . }
+}
+
+</pre>
+               <pre>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;sparql xmlns='http://www.w3.org/2005/sparql-results#'&gt;
+&lt;head&gt;
+&lt;variable name='x'/&gt;
+&lt;/head&gt;
+&lt;results&gt;
+&lt;result&gt;
+&lt;binding name='x'&gt;&lt;bnode&gt;b&lt;/bnode&gt;&lt;/binding&gt;
+&lt;/result&gt;
+&lt;/results&gt;
+&lt;/sparql&gt;
+</pre>
+             </div></td><td class="pass">✔</td><td class="pass">✔</td></tr><tr><td class="label toggle" data-id="b30">SPARQL-exists/tests/other/exists-pfps/existsBound01.rq
+             <div id="b30" class="flex">
+               <pre>prefix : &lt;http://www.example.org/&gt;
+
+SELECT ?x
+FROM &lt;http://www.w3c.org/exists-pfps/existsbpb&gt;
+WHERE {
+  :b :p ?x .
+  FILTER EXISTS { FILTER BOUND(?x) }
+}
+
+</pre>
+               <pre>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;sparql xmlns='http://www.w3.org/2005/sparql-results#'&gt;
+&lt;head&gt;
+&lt;variable name='x'/&gt;
+&lt;/head&gt;
+&lt;results&gt;
+&lt;/results&gt;
+&lt;/sparql&gt;
+</pre>
+             </div></td><td class="pass">✔</td><td class="pass">✔</td></tr><tr><td class="label toggle" data-id="b31">SPARQL-exists/tests/other/exists-pfps/existsHernandez01.rq
+             <div id="b31" class="flex">
+               <pre>prefix : &lt;http://www.example.org/&gt;
+
+SELECT ?parent
+FROM &lt;http://www.w3c.org/exists-pfps/existsHernandez01&gt;
+WHERE {
+  ?parent :country :j
+  FILTER ( EXISTS { SELECT ?child
+    WHERE { ?child :parent ?parent }
+  } )
+}
+</pre>
+               <pre>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;sparql xmlns='http://www.w3.org/2005/sparql-results#'&gt;
+&lt;head&gt;
+&lt;variable name='parent'/&gt;
+&lt;/head&gt;
+&lt;results&gt;
+&lt;result&gt;
+&lt;binding name='parent'&gt;&lt;uri&gt;http://www.example.org/b&lt;/uri&gt;&lt;/binding&gt;
+&lt;/result&gt;
+&lt;/results&gt;
+&lt;/sparql&gt;
+</pre>
+             </div></td><td class="pass">✔</td><td class="pass">✔</td></tr><tr><td class="label toggle" data-id="b32">SPARQL-exists/tests/other/exists-pfps/existsHernandez02.rq
+             <div id="b32" class="flex">
+               <pre>prefix : &lt;http://www.example.org/&gt;
+
+SELECT ?parent
+FROM &lt;http://www.w3c.org/exists-pfps/existsHernandez01&gt;
+WHERE {
+  ?parent :country :j
+  FILTER ( EXISTS { SELECT ?child
+    WHERE { ?child :parent ?chparent
+      FILTER (?chparent = ?parent)
+    }
+  } )
+}
+
+</pre>
+               <pre>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;sparql xmlns='http://www.w3.org/2005/sparql-results#'&gt;
+&lt;head&gt;
+&lt;variable name='parent'/&gt;
+&lt;/head&gt;
+&lt;results&gt;
+&lt;result&gt;
+&lt;binding name='parent'&gt;&lt;uri&gt;http://www.example.org/b&lt;/uri&gt;&lt;/binding&gt;
+&lt;/result&gt;
+&lt;/results&gt;
+&lt;/sparql&gt;
+</pre>
+             </div></td><td class="pass">✔</td><td class="pass">✔</td></tr><tr><td class="label toggle" data-id="b33">SPARQL-exists/tests/other/exists-pfps/existsMinus01.rq
+             <div id="b33" class="flex">
+               <pre>prefix : &lt;http://www.example.org/&gt;
+
+SELECT ?x
+FROM &lt;http://www.w3c.org/exists-pfps/existsbpb&gt;
+WHERE {
+  ?x :p :b .
+  FILTER EXISTS { ?x :p :b . MINUS { ?x :p :b } }
+}
+
+</pre>
+               <pre>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;sparql xmlns='http://www.w3.org/2005/sparql-results#'&gt;
+&lt;head&gt;
+&lt;variable name='x'/&gt;
+&lt;/head&gt;
+&lt;results&gt;
+&lt;result&gt;
+&lt;binding name='x'&gt;&lt;uri&gt;http://www.example.org/b&lt;/uri&gt;&lt;/binding&gt;
+&lt;/result&gt;
+&lt;/results&gt;
+&lt;/sparql&gt;
+</pre>
+             </div></td><td class="pass">✔</td><td class="pass">✔</td></tr><tr><td class="label toggle" data-id="b34">SPARQL-exists/tests/other/exists-pfps/existsScope01.rq
+             <div id="b34" class="flex">
+               <pre>prefix : &lt;http://www.example.org/&gt;
+
+SELECT ?x
+FROM &lt;http://www.w3c.org/exists-pfps/existsbpb&gt;
+WHERE {
+  ?x :p :b .
+  FILTER EXISTS { BIND ( :j AS ?x ) }
+}
+
+</pre>
+               <pre>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;sparql xmlns='http://www.w3.org/2005/sparql-results#'&gt;
+&lt;head&gt;
+&lt;variable name='x'/&gt;
+&lt;/head&gt;
+&lt;results&gt;
+&lt;binding name='x'&gt;&lt;uri&gt;http://www.example.org/b&lt;/uri&gt;&lt;/binding&gt;
+&lt;/results&gt;
+&lt;/sparql&gt;
+</pre>
+             </div></td><td class="pass">✔</td><td class="pass">✔</td></tr><tr><td class="label toggle" data-id="b35">SPARQL-exists/tests/other/exists-pfps/existsSubquery01.rq
+             <div id="b35" class="flex">
+               <pre>prefix : &lt;http://www.example.org/&gt;
+
+SELECT ?x
+FROM &lt;http://www.w3c.org/exists-pfps/existsbpb&gt;
+WHERE {
+  ?x :p :b .
+  FILTER EXISTS { SELECT ?x WHERE { ?x :p :b . } }
+}
+
+</pre>
+               <pre>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;sparql xmlns='http://www.w3.org/2005/sparql-results#'&gt;
+&lt;head&gt;
+&lt;variable name='x'/&gt;
+&lt;/head&gt;
+&lt;results&gt;
+&lt;result&gt;
+&lt;binding name='x'&gt;&lt;uri&gt;http://www.example.org/b&lt;/uri&gt;&lt;/binding&gt;
+&lt;/result&gt;
+&lt;/results&gt;
+&lt;/sparql&gt;
+</pre>
+             </div></td><td class="pass">✔</td><td class="pass">✔</td></tr><tr><td class="label toggle" data-id="b36">SPARQL-exists/tests/other/exists-pfps/existsSubquery02.rq
+             <div id="b36" class="flex">
+               <pre>prefix : &lt;http://www.example.org/&gt;
+
+SELECT ?x
+FROM &lt;http://www.w3c.org/exists-pfps/existsbpb&gt;
+WHERE {
+  ?x :p :b .
+  FILTER EXISTS { { SELECT ?x WHERE { ?x :p :b . } } }
+}
+
+</pre>
+               <pre>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;sparql xmlns='http://www.w3.org/2005/sparql-results#'&gt;
+&lt;head&gt;
+&lt;variable name='x'/&gt;
+&lt;/head&gt;
+&lt;results&gt;
+&lt;result&gt;
+&lt;binding name='x'&gt;&lt;uri&gt;http://www.example.org/b&lt;/uri&gt;&lt;/binding&gt;
+&lt;/result&gt;
+&lt;/results&gt;
+&lt;/sparql&gt;
+</pre>
+             </div></td><td class="pass">✔</td><td class="pass">✔</td></tr><tr><td class="label toggle" data-id="b37">SPARQL-exists/tests/other/exists-pfps/existsSubquery03.rq
+             <div id="b37" class="flex">
+               <pre>prefix : &lt;http://www.example.org/&gt;
+
+SELECT ?x
+FROM &lt;http://www.w3c.org/exists-pfps/existsbpb&gt;
+WHERE {
+  ?x :p ?y .
+  FILTER EXISTS { { SELECT ?x WHERE { ?x :p :b . } }
+  	 	  { SELECT ?y WHERE { :b ?y :b . } } }
+}
+
+</pre>
+               <pre>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;sparql xmlns='http://www.w3.org/2005/sparql-results#'&gt;
+&lt;head&gt;
+&lt;variable name='x'/&gt;
+&lt;/head&gt;
+&lt;results&gt;
+&lt;/results&gt;
+&lt;/sparql&gt;
+</pre>
+             </div></td><td class="pass">✔</td><td class="pass">✔</td></tr><tr><td class="label toggle" data-id="b38">SPARQL-exists/tests/other/exists-pfps/existsSubquery04.rq
+             <div id="b38" class="flex">
+               <pre>prefix : &lt;http://www.example.org/&gt;
+
+SELECT ?x
+FROM &lt;http://www.w3c.org/exists-pfps/existsSubquery04&gt;
+WHERE {
+  ?x :a ?y .
+  FILTER EXISTS { SELECT ?z WHERE { ?z :f ?y . } }
+}
+
+</pre>
+               <pre>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;sparql xmlns='http://www.w3.org/2005/sparql-results#'&gt;
+&lt;head&gt;
+&lt;variable name='x'/&gt;
+&lt;/head&gt;
+&lt;results&gt;
+&lt;/results&gt;
+&lt;/sparql&gt;
+</pre>
+             </div></td><td class="pass">✔</td><td class="pass">✔</td></tr><tr><td class="label toggle" data-id="b39">SPARQL-exists/tests/other/exists-pfps/existsSubquery05.rq
+             <div id="b39" class="flex">
+               <pre>prefix : &lt;http://www.example.org/&gt;
+
+SELECT ?x
+FROM &lt;http://www.w3c.org/exists-pfps/existsSubquery04&gt;
+WHERE {
+  ?x :a ?y .
+  FILTER EXISTS { { SELECT ?z WHERE { ?z :f ?y . } } }
+}
+
+</pre>
+               <pre>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;sparql xmlns='http://www.w3.org/2005/sparql-results#'&gt;
+&lt;head&gt;
+&lt;variable name='x'/&gt;
+&lt;/head&gt;
+&lt;results&gt;
+&lt;/results&gt;
+&lt;/sparql&gt;
+</pre>
+             </div></td><td class="pass">✔</td><td class="pass">✔</td></tr><tr><td class="label toggle" data-id="b40">SPARQL-exists/tests/other/exists-pfps/existsSubquery06.rq
+             <div id="b40" class="flex">
+               <pre>prefix : &lt;http://www.example.org/&gt;
+
+SELECT ?x
+FROM &lt;http://www.w3c.org/exists-pfps/existsbpb&gt;
+WHERE {
+  ?x :p :b .
+  FILTER EXISTS { { SELECT ( :d AS ?x ) WHERE { :b :p :b . } } }
+}
+
+</pre>
+               <pre>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;sparql xmlns='http://www.w3.org/2005/sparql-results#'&gt;
+&lt;head&gt;
+&lt;variable name='x'/&gt;
+&lt;/head&gt;
+&lt;results&gt;
+&lt;result&gt;
+&lt;binding name='x'&gt;&lt;uri&gt;http://www.example.org/b&lt;/uri&gt;&lt;/binding&gt;
+&lt;/result&gt;
+&lt;/results&gt;
+&lt;/sparql&gt;
+</pre>
+             </div></td><td class="pass">✔</td><td class="pass">✔</td></tr><tr><td class="label toggle" data-id="b41">SPARQL-exists/tests/other/exists-pfps/existsSubquery07.rq
+             <div id="b41" class="flex">
+               <pre>prefix : &lt;http://www.example.org/&gt;
+
+SELECT ?x
+FROM &lt;http://www.w3c.org/exists-pfps/existsbpb&gt;
+WHERE {
+  ?x :p :b .
+  FILTER EXISTS { ?x :p :b .
+                  { SELECT ( :d AS ?x ) WHERE { :b :p :b . } } }
+}
+
+</pre>
+               <pre>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;sparql xmlns='http://www.w3.org/2005/sparql-results#'&gt;
+&lt;head&gt;
+&lt;variable name='x'/&gt;
+&lt;/head&gt;
+&lt;results&gt;
+&lt;result&gt;
+&lt;binding name='x'&gt;&lt;uri&gt;http://www.example.org/b&lt;/uri&gt;&lt;/binding&gt;
+&lt;/result&gt;
+&lt;/results&gt;
+&lt;/sparql&gt;
+</pre>
+             </div></td><td class="pass">✔</td><td class="pass">✔</td></tr><tr><td class="label toggle" data-id="b42">SPARQL-exists/tests/other/exists-pfps/existsSubquery08.rq
+             <div id="b42" class="flex">
+               <pre>prefix : &lt;http://www.example.org/&gt;
+
+SELECT ?x
+FROM &lt;http://www.w3c.org/exists-pfps/existsbpb&gt;
+WHERE {
+  ?x :p :b .
+  FILTER EXISTS { SELECT ?x WHERE { FILTER BOUND(?x) } }
+}
+
+</pre>
+               <pre>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;sparql xmlns='http://www.w3.org/2005/sparql-results#'&gt;
+&lt;head&gt;
+&lt;variable name='x'/&gt;
+&lt;/head&gt;
+&lt;results&gt;
+&lt;/results&gt;
+&lt;/sparql&gt;
+</pre>
+             </div></td><td class="pass">✔</td><td class="pass">✔</td></tr><tr><td class="label toggle" data-id="b43">SPARQL-exists/tests/other/exists-pfps/existsSubquery09.rq
+             <div id="b43" class="flex">
+               <pre>prefix : &lt;http://www.example.org/&gt;
+
+SELECT ?x
+FROM &lt;http://www.w3c.org/exists-pfps/existsSubquery09&gt;
+WHERE {
+  ?x :p ?y .
+  FILTER EXISTS { SELECT ?x WHERE { ?x :p ?y . } GROUP BY ?x HAVING ( COUNT(*) &gt; 1 ) }
+}
+
+</pre>
+               <pre>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;sparql xmlns='http://www.w3.org/2005/sparql-results#'&gt;
+&lt;head&gt;
+&lt;variable name='x'/&gt;
+&lt;/head&gt;
+&lt;results&gt;
+&lt;/results&gt;
+&lt;/sparql&gt;
+</pre>
+             </div></td><td class="pass">✔</td><td class="pass">✔</td></tr><tr><td class="label toggle" data-id="b44">SPARQL-exists/tests/other/exists-pfps/existsSubquery10.rq
+             <div id="b44" class="flex">
+               <pre>prefix : &lt;http://www.example.org/&gt;
+
+SELECT ?x
+FROM &lt;http://www.w3c.org/exists-pfps/existsbpb&gt;
+WHERE {
+  BIND ( :b AS ?x )
+  FILTER EXISTS { SELECT ( :d AS ?x ) WHERE { } }
+}
+
+</pre>
+               <pre>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;sparql xmlns='http://www.w3.org/2005/sparql-results#'&gt;
+&lt;head&gt;
+&lt;variable name='x'/&gt;
+&lt;/head&gt;
+&lt;results&gt;
+&lt;result&gt;
+&lt;binding name='x'&gt;&lt;uri&gt;http://www.example.org/b&lt;/uri&gt;&lt;/binding&gt;
+&lt;/result&gt;
+&lt;/results&gt;
+&lt;/sparql&gt;
+</pre>
+             </div></td><td class="pass">✔</td><td class="fail toggle" data-id="p45">✘
+                 <pre id="p45" style="display:none">missing (dydra.com.sparql/SPARQL-exists/tests/other/exists-pfps/existsSubquery10.srx)</pre></td></tr><tr><td class="label toggle" data-id="b46">SPARQL-exists/tests/other/exists-pfps/existsSubquery11.rq
+             <div id="b46" class="flex">
+               <pre>prefix : &lt;http://www.example.org/&gt;
+
+SELECT ?x
+FROM &lt;http://www.w3c.org/exists-pfps/existsbpb&gt;
+WHERE {
+  BIND ( :b AS ?x )
+  BIND ( :b AS ?y )
+  FILTER EXISTS { { SELECT ( :d AS ?x ) WHERE { } }
+  	 	  { SELECT ( :e AS ?y ) WHERE { } } }
+}
+
+</pre>
+               <pre>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;sparql xmlns='http://www.w3.org/2005/sparql-results#'&gt;
+&lt;head&gt;
+&lt;variable name='x'/&gt;
+&lt;/head&gt;
+&lt;results&gt;
+&lt;/results&gt;
+&lt;/sparql&gt;
+</pre>
+             </div></td><td class="pass">✔</td><td class="pass">✔</td></tr><tr><td class="label toggle" data-id="b47">SPARQL-exists/tests/other/exists-pfps/existsValues01.rq
+             <div id="b47" class="flex">
+               <pre>prefix : &lt;http://www.example.org/&gt;
+
+SELECT ?x
+FROM &lt;http://www.w3c.org/exists-pfps/existsbpb&gt;
+WHERE {
+  ?x :p :b .
+  FILTER EXISTS { VALUES (?x) { ( :c ) } }
+}
+
+</pre>
+               <pre>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;sparql xmlns='http://www.w3.org/2005/sparql-results#'&gt;
+&lt;head&gt;
+&lt;variable name='x'/&gt;
+&lt;/head&gt;
+&lt;results&gt;
+&lt;result&gt;
+&lt;binding name='x'&gt;&lt;uri&gt;http://www.example.org/b&lt;/uri&gt;&lt;/binding&gt;
+&lt;/result&gt;
+&lt;/results&gt;
+&lt;/sparql&gt;
+</pre>
+             </div></td><td class="pass">✔</td><td class="pass">✔</td></tr><tr><td class="label toggle" data-id="b48">SPARQL-exists/tests/other/exists-pfps/existsValues02.rq
+             <div id="b48" class="flex">
+               <pre>prefix : &lt;http://www.example.org/&gt;
+
+SELECT ?x
+FROM &lt;http://www.w3c.org/exists-pfps/existsbpb&gt;
+WHERE {
+  ?x :p :y .
+  FILTER EXISTS { VALUES (?x) { ( :c ) }
+  	 	  VALUES (?y) { ( :d ) } }
+}
+
+</pre>
+               <pre>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;sparql xmlns='http://www.w3.org/2005/sparql-results#'&gt;
+&lt;head&gt;
+&lt;variable name='x'/&gt;
+&lt;/head&gt;
+&lt;results&gt;
+&lt;/results&gt;
+&lt;/sparql&gt;
+</pre>
+             </div></td><td class="pass">✔</td><td class="pass">✔</td></tr><tr><td class="label toggle" data-id="b49">SPARQL-exists/tests/other/exists-sparql11/exists01.rq
+             <div id="b49" class="flex">
+               <pre>prefix ex: &lt;http://www.example.org/&gt;
+
+select *
+FROM &lt;http://www.w3c.org/exists-sparql11/exists01&gt;
+where {
+?s ?p ?o
+filter exists {?s ?p ex:o}
+}
+
+</pre>
+               <pre>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;sparql xmlns='http://www.w3.org/2005/sparql-results#'&gt;
+&lt;head&gt;
+&lt;variable name='s'/&gt;
+&lt;variable name='o'/&gt;
+&lt;variable name='p'/&gt;
+&lt;/head&gt;
+&lt;results&gt;
+&lt;result&gt;
+&lt;binding name='s'&gt;&lt;uri&gt;http://www.example.org/s&lt;/uri&gt;&lt;/binding&gt;
+&lt;binding name='o'&gt;&lt;uri&gt;http://www.example.org/o&lt;/uri&gt;&lt;/binding&gt;
+&lt;binding name='p'&gt;&lt;uri&gt;http://www.example.org/p&lt;/uri&gt;&lt;/binding&gt;
+&lt;/result&gt;
+&lt;result&gt;
+&lt;binding name='s'&gt;&lt;uri&gt;http://www.example.org/s&lt;/uri&gt;&lt;/binding&gt;
+&lt;binding name='o'&gt;&lt;uri&gt;http://www.example.org/o1&lt;/uri&gt;&lt;/binding&gt;
+&lt;binding name='p'&gt;&lt;uri&gt;http://www.example.org/p&lt;/uri&gt;&lt;/binding&gt;
+&lt;/result&gt;
+&lt;result&gt;
+&lt;binding name='s'&gt;&lt;uri&gt;http://www.example.org/s&lt;/uri&gt;&lt;/binding&gt;
+&lt;binding name='o'&gt;&lt;uri&gt;http://www.example.org/o2&lt;/uri&gt;&lt;/binding&gt;
+&lt;binding name='p'&gt;&lt;uri&gt;http://www.example.org/p&lt;/uri&gt;&lt;/binding&gt;
+&lt;/result&gt;
+&lt;/results&gt;
+&lt;/sparql&gt;</pre>
+             </div></td><td class="pass">✔</td><td class="pass">✔</td></tr><tr><td class="label toggle" data-id="b50">SPARQL-exists/tests/other/exists-sparql11/exists02.rq
+             <div id="b50" class="flex">
+               <pre>prefix ex: &lt;http://www.example.org/&gt;
+
+select *
+FROM &lt;http://www.w3c.org/exists-sparql11/exists01&gt;
+where {
+?s ?p ex:o2
+filter exists {ex:s ex:p ex:o}
+}
+
+</pre>
+               <pre>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;sparql xmlns='http://www.w3.org/2005/sparql-results#'&gt;
+&lt;head&gt;
+&lt;variable name='s'/&gt;
+&lt;variable name='p'/&gt;
+&lt;/head&gt;
+&lt;results&gt;
+&lt;result&gt;
+&lt;binding name='s'&gt;&lt;uri&gt;http://www.example.org/s&lt;/uri&gt;&lt;/binding&gt;
+&lt;binding name='p'&gt;&lt;uri&gt;http://www.example.org/p&lt;/uri&gt;&lt;/binding&gt;
+&lt;/result&gt;
+&lt;result&gt;
+&lt;binding name='s'&gt;&lt;uri&gt;http://www.example.org/t&lt;/uri&gt;&lt;/binding&gt;
+&lt;binding name='p'&gt;&lt;uri&gt;http://www.example.org/p&lt;/uri&gt;&lt;/binding&gt;
+&lt;/result&gt;
+&lt;/results&gt;
+&lt;/sparql&gt;
+</pre>
+             </div></td><td class="pass">✔</td><td class="pass">✔</td></tr><tr><td class="label toggle" data-id="b51">SPARQL-exists/tests/other/exists-sparql11/exists03.rq
+             <div id="b51" class="flex">
+               <pre>prefix ex: &lt;http://www.example.org/&gt;
+
+select *
+FROM &lt;http://www.w3c.org/exists-sparql11/exists01&gt;
+FROM NAMED &lt;http://www.w3c.org/exists-sparql11/exists02&gt;
+where {
+graph &lt;exists02.ttl&gt; { 
+  ?s ?p ex:o1
+  filter exists { ?s ?p ex:o2 } 
+}
+
+}
+
+</pre>
+               <pre>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;sparql xmlns='http://www.w3.org/2005/sparql-results#'&gt;
+&lt;head&gt;
+&lt;variable name='s'/&gt;
+&lt;variable name='p'/&gt;
+&lt;/head&gt;
+&lt;results&gt;
+&lt;result&gt;
+&lt;binding name='s'&gt;&lt;uri&gt;http://www.example.org/b&lt;/uri&gt;&lt;/binding&gt;
+&lt;binding name='p'&gt;&lt;uri&gt;http://www.example.org/p&lt;/uri&gt;&lt;/binding&gt;
+&lt;/result&gt;
+&lt;/results&gt;
+&lt;/sparql&gt;</pre>
+             </div></td><td class="pass">✔</td><td class="pass">✔</td></tr><tr><td class="label toggle" data-id="b52">SPARQL-exists/tests/other/exists-sparql11/exists04.rq
+             <div id="b52" class="flex">
+               <pre>prefix ex: &lt;http://www.example.org/&gt;
+
+select *
+FROM &lt;http://www.w3c.org/exists-sparql11/exists01&gt;
+where {
+  ?s ?p ex:o
+  filter exists { ?s ?p ex:o1  filter exists { ?s ?p ex:o2 } } 
+}
+
+</pre>
+               <pre>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;sparql xmlns='http://www.w3.org/2005/sparql-results#'&gt;
+&lt;head&gt;
+&lt;variable name='s'/&gt;
+&lt;variable name='p'/&gt;
+&lt;/head&gt;
+&lt;results&gt;
+&lt;result&gt;
+&lt;binding name='s'&gt;&lt;uri&gt;http://www.example.org/s&lt;/uri&gt;&lt;/binding&gt;
+&lt;binding name='p'&gt;&lt;uri&gt;http://www.example.org/p&lt;/uri&gt;&lt;/binding&gt;
+&lt;/result&gt;
+&lt;/results&gt;
+&lt;/sparql&gt;</pre>
+             </div></td><td class="pass">✔</td><td class="pass">✔</td></tr><tr><td class="label toggle" data-id="b53">SPARQL-exists/tests/other/exists-sparql11/exists05.rq
+             <div id="b53" class="flex">
+               <pre>prefix ex: &lt;http://www.example.org/&gt;
+
+select *
+FROM &lt;http://www.w3c.org/exists-sparql11/exists01&gt;
+where {
+  ?s ?p ex:o
+  filter exists { ?s ?p ex:o1  filter not exists { ?s ?p ex:o2 } } 
+}
+
+</pre>
+               <pre>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;sparql xmlns='http://www.w3.org/2005/sparql-results#'&gt;
+&lt;head&gt;
+&lt;variable name='s'/&gt;
+&lt;variable name='p'/&gt;
+&lt;/head&gt;
+&lt;results&gt;
+&lt;/results&gt;
+&lt;/sparql&gt;</pre>
+             </div></td><td class="pass">✔</td><td class="pass">✔</td></tr></tbody></table><p>Total tests: 43</p>
+<script>
+document.getElementById('tbl').addEventListener('click', e => {
+  const cell = e.target.closest('.toggle'); if (!cell) return;
+  const el   = document.getElementById(cell.dataset.id);
+  if (!el) return;
+  const isFlex = el.classList.contains('flex');
+  el.style.display = (el.style.display==='none'||!el.style.display)
+                     ? (isFlex?'flex':'block') : 'none';
+});
+</script></body></html>
