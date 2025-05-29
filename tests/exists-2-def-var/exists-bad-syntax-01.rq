@@ -2,5 +2,5 @@ PREFIX : <http://example/>
 
 SELECT * {
    :s :p1 ?o
-   FILTER EXISTS { BIND(1 AS ?o) }
+   FILTER EXISTS { BIND("1" AS ?o) }
 }

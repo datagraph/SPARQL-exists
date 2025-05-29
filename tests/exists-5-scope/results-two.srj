@@ -1,13 +1,13 @@
 { "head": {
-  "vars": [ "o" ]
-} ,
+    "vars": [ "o" ]
+  } ,
   "results": {
     "bindings": [
-      {
-        "o": { "type": "literal" , "value": "0", "datatype": "http://www.w3.org/2001/XMLSchema#integer" }
-      },
-      {
-        "o": { "type": "literal" , "value": "1", "datatype": "http://www.w3.org/2001/XMLSchema#integer" }
+      { 
+        "o": { "type": "literal" , "value": "A" }
+      } ,
+      { 
+        "o": { "type": "literal" , "value": "B" }
       }
     ]
   }

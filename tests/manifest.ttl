@@ -15,6 +15,7 @@ PREFIX mf:     <http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#>
     <exists-3-bgp/manifest.ttl>
     <exists-4-minus/manifest.ttl>
     <exists-5-scope/manifest.ttl>
+    <exists-6-places/manifest.ttl>
 
     ## Specific areas
     <exists-filter/manifest.ttl>

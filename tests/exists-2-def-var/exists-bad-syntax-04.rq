@@ -1,9 +1,9 @@
 PREFIX : <http://example/>
 
 SELECT * {
-   ;s :p1 ?o
+   :s :p1 ?o
    FILTER EXISTS {
-     { SELECT (?z+1 AS ?o) { :x :y ?z } }
+     { SELECT (str(?z) AS ?o) { :x :y ?z } }
      :a :b :c
    }
 }

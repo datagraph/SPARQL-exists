@@ -1,4 +1,4 @@
-# RDF and SPARQL WG - SPARQL TF - EXISTS testt
+# RDF and SPARQL WG - SPARQL TF - EXISTS tests
 
 ## 2024-05-01
 
