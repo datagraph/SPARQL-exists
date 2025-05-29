@@ -1,6 +1,8 @@
 prefix : <http://www.example.org/>
 
-SELECT ?parent WHERE {
+SELECT ?parent
+FROM <http://www.w3c.org/exists-pfps/existsHernandez01>
+WHERE {
   ?parent :country :j
   FILTER ( EXISTS { SELECT ?child
     WHERE { ?child :parent ?chparent
@@ -8,3 +10,4 @@ SELECT ?parent WHERE {
     }
   } )
 }
+

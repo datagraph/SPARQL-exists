@@ -1,5 +1,7 @@
 PREFIX : <http://example/>
 
-SELECT * { 
+SELECT *
+FROM <http://www.w3c.org/exists-1-empty-bgp/data>
+{ 
    FILTER EXISTS { SELECT ?y { ?y :p :o } }
 }

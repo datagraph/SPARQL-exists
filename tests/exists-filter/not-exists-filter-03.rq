@@ -1,7 +1,10 @@
-SELECT ?v WHERE {
+SELECT ?v
+FROM <http://www.w3c.org/exists-filter/data1>
+WHERE {
   ?v <ex:p> "z"
   FILTER NOT EXISTS {
      SELECT ?v WHERE {
         FILTER (?v = <ex:a>)
   } }
 }
+

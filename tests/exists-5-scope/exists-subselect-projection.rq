@@ -1,6 +1,7 @@
 PREFIX : <http://example/>
 
-SELECT * {
+SELECT *
+FROM <http://www.w3c.org/exists-5-scope/data>{
    :s :p1 ?o .
-   FILTER EXISTS {SELECT (?v + 1) AS ?o) WHERE { :s :p1 ?v }}
+   FILTER EXISTS {SELECT ((?v + 1) AS ?o) WHERE { :s :p1 ?v }}
 }

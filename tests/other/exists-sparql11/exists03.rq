@@ -1,9 +1,13 @@
 prefix ex: <http://www.example.org/>
 
-select * where {
+select *
+FROM <http://www.w3c.org/exists-sparql11/exists01>
+FROM NAMED <http://www.w3c.org/exists-sparql11/exists02>
+where {
 graph <exists02.ttl> { 
   ?s ?p ex:o1
   filter exists { ?s ?p ex:o2 } 
 }
 
 }
+

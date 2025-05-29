@@ -1,6 +1,9 @@
 prefix : <http://www.example.org/>
 
-SELECT ?x WHERE {
+SELECT ?x
+FROM <http://www.w3c.org/exists-pfps/existsBlank01>
+WHERE {
   :s :p ?x .
   FILTER EXISTS { ?x :p _:a . }
 }
+

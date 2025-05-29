@@ -1,8 +1,11 @@
 prefix : <http://www.example.org/>
 
-SELECT ?x WHERE {
+SELECT ?x
+FROM <http://www.w3c.org/exists-pfps/existsbpb>
+WHERE {
   BIND ( :b AS ?x )
   BIND ( :b AS ?y )
   FILTER EXISTS { { SELECT ( :d AS ?x ) WHERE { } }
   	 	  { SELECT ( :e AS ?y ) WHERE { } } }
 }
+

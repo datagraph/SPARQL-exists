@@ -1,6 +1,8 @@
 PREFIX : <http://example/>
 
-SELECT ?x WHERE {
+SELECT ?x
+FROM <http://www.w3c.org/exists-3-bgp/data1>
+WHERE {
     ?x :p :d .
     FILTER EXISTS { ?x :q :b . }
 }
