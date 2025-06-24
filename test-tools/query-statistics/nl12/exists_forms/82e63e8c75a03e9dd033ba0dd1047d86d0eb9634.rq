@@ -1,0 +1,40 @@
+# tuples @ http://www.datahub.nexperia.com/nexperia/plm/sparql
+
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+
+select
+
+    ?0
+
+where {
+
+    { select distinct ?0 where {
+
+        {
+
+            ?0 a <http://www.w3.org/2002/07/owl#Class> filter exists { [] a ?0 }
+
+        } union {
+
+            ?0 a <http://www.w3.org/2000/01/rdf-schema#Class> filter exists { [] a ?0 }
+
+        }
+
+        filter ( !isBlank(?0) && strbefore(str(?0), '#') not in (
+            'http://www.w3.org/1999/02/22-rdf-syntax-ns',
+            'http://www.w3.org/2000/01/rdf-schema',
+            'http://www.w3.org/2001/XMLSchema',
+            'http://www.w3.org/2002/07/owl'
+        ) )
+
+    } limit 100000 }
+
+}
+
+order by
+
+    asc(?0)
+
+limit 1000

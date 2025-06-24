@@ -1,0 +1,1 @@
+SELECT DISTINCT ?title ?children {GRAPH <http://data.nxp.com/id/projects/marketingTree> {OPTIONAL { <http://data.nxp.com/id/concepts/514> <http://www.w3.org/2004/02/skos/core#prefLabel> ?title . }} FILTER (lang(?title) = 'en-us' || !bound(?title)) BIND ( EXISTS { <http://data.nxp.com/id/concepts/514>  <http://www.w3.org/2004/02/skos/core#narrower> ?_narrow } AS ?children ) }

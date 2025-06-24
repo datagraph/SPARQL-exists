@@ -1,0 +1,15 @@
+prefix plm: <http://data.nxp.com/def/plm/>
+prefix udm: <http://data.nxp.com/def/udm/>
+construct {
+  ?ChangeOrder a plm:ChangeOrder ;
+    plm:changeOrderNumber ?changeOrderNumber ;
+    plm:description ?description ;
+    plm:changeCategory ?changeCategory ;
+    plm:ecoImplementationDueDate ?ecoImplementationDueDate ;
+    plm:state ?state .
+}
+from <urn:dydra:all>
+where {
+  filter exists { <http://data.nxp.com/id/plm/salesItem/935308613118> a plm:SalesItem }
+
+}

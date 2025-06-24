@@ -1,0 +1,16 @@
+PREFIX plm: <http://data.nxp.com/def/plm/>
+CONSTRUCT {
+    # constructing properties of item 
+    <http://data.nxp.com/id/plm/salesItem/935345917598> plm:name ?var_1 .
+    <http://data.nxp.com/id/plm/salesItem/935345917598> ?var_2_prop ?var_2 .
+    #?var_2 plm:name ?var_2_1 .
+} FROM <urn:dydra:all>
+WHERE {
+  # identifying properties of item 
+  {
+    <http://data.nxp.com/id/plm/salesItem/935345917598> plm:name ?var_1 .
+  } UNION {
+    <http://data.nxp.com/id/plm/salesItem/935345917598> ?var_2_prop ?var_2 .
+    filter exists { ?var_2 plm:name ?var_2_1 . }
+  }
+}

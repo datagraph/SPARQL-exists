@@ -1,0 +1,22 @@
+prefix plm: <http://data.nxp.com/def/plm/>
+construct {
+  ?ChangeOrder a plm:ChangeOrder ;
+    plm:changeOrderNumber ?changeOrderNumber ;
+    plm:description ?description ;
+    plm:changeCategory ?changeCategory ;
+    plm:ecoImplementationDueDate ?ecoImplementationDueDate ;
+    plm:state ?state .
+}
+from <urn:dydra:all>
+where {
+  filter exists { $item a plm:SalesItem }
+
+  ?ChangeOrder a plm:ChangeOrder ;
+    plm:changedItem $item ;
+    plm:changeOrderNumber ?changeOrderNumber ;
+    plm:description ?description ;
+    plm:changeCategory ?changeCategory ;
+    plm:state ?state .
+
+  optional {?ChangeOrder plm:ecoImplementationDueDate ?ecoImplementationDueDate .}
+}
