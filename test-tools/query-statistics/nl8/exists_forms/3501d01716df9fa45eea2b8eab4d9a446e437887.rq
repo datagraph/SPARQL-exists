@@ -1,0 +1,57 @@
+prefix plm: <http://data.nxp.com/def/plm/>
+prefix udm: <http://data.nxp.com/def/udm/>
+prefix ie-mdm: <https://data.nxp.com/def/ie-mdm/>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix : <urn:dydra:>
+
+#Types: ICFT, CAPT, MOFT, TEP
+select distinct * from <urn:dydra:all>
+where   
+{ 
+    bind(<http://data.nxp.com/id/plm/icft/340200133455>  as ?parent)
+    ?parent a plm:ICFT;
+            plm:qualifiedRelation ?qualifiedRelation;
+            plm:name ?parentNameNC12.
+    ?qualifiedRelation a plm:Relation,plm:BOM;
+                       plm:target ?child .
+    ?child plm:name ?child12nc;
+           plm:revision ?childRevision ;
+           a ?cType.
+
+    optional{?parent plm:qualifiedRelation ?qualifiedRelation.
+              ?qualifiedRelation plm:option ?childOption }
+    optional{?parent plm:qualifiedRelation ?qualifiedRelation.
+              ?qualifiedRelation plm:role ?childRole}
+    optional{
+        ?parent plm:qualifiedRelation ?qualifiedRelation.
+        ?qualifiedRelation plm:target ?child.
+        ?child plm:assignedDocument ?markingContent.
+        ?markingContent a plm:MarkingContent;
+                        plm:name ?markingContentName.
+        optional{?markingContent plm:description ?markingContentDescription }
+        optional{?markingContent plm:markingLineA ?markingContentMarkingLineA }
+        optional{?markingContent plm:markingLineB ?markingContentMarkingLineB }
+        optional{?markingContent plm:markingLineC ?markingContentMarkingLineC }
+        optional{?markingContent plm:markingLineD ?markingContentMarkingLineD }
+        optional{?markingContent plm:markingLineE ?markingContentMarkingLineE }
+        optional{?markingContent plm:markingLineF ?markingContentMarkingLineF }
+        optional{?markingContent plm:markingLineG ?markingContentMarkingLineG }
+        optional{?markingContent plm:remarks ?markingNotes }
+        bind(exists{?markingContent plm:file ?markingContentFile .} AS ?_markingContentHasFiles)
+    }
+    optional{
+        ?child plm:assignedDocument ?markingInstruction.
+        ?markingInstruction a udm:MarkingInstruction;
+                            udm:usesInstruction ?markingFormat;
+                            udm:number ?markingInstructionNumber;
+                            udm:name ?markingInstructionName.
+        ?markingFormat a udm:MarkingFormat;
+                        udm:name ?markingFormatName .
+        optional{?markingInstruction udm:description ?markingInstructionDesc}
+        optional{?markingInstruction udm:filesAttached ?_markingInstructionHasFiles}
+    }
+    optional{?child plm:description ?childDescription}
+    optional{?child plm:legacyPartDescription ?childLegacyPartDescription }
+    optional{?child plm:legacyPartNumber ?childLegacyPartNumber }
+
+} limit 10

@@ -1,0 +1,147 @@
+prefix plm: <http://data.nxp.com/def/plm/>
+prefix udm: <http://data.nxp.com/def/udm/>
+prefix ie-mdm: <http://data.nxp.com/def/ie-mdm/>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+#EXAMPLE CESF: 3400 000 69841, 3400 000 60625 ,3400 000 55421, 3400 000 65924, 3400 000 67312
+#EXAMPLE CEGR: 3400 000 69840, 3400 000 60626, 3400 000 55422, 3400 000 65925, 3400 000 67313
+#EXAMPLE CEMA: 3400 000 79921, 3400 000 73936, 3400 000 79974, 3400 000 79916, 3400 000 66679
+#EXAMPLE CEBC: 3400 000 68678, 3422 071 43231, 3400 000 62191, 3400 000 62183, 3400 000 55011
+
+SELECT DISTINCT
+?productOriginClassification ?parentCMI ?parentType
+?parentNc12name ?parentDescription ?parentLPNDesc ?parentOPN
+?parentLPN ?businessLineName ?parentState ?productSecurityIndicator
+?tcaHarmonizedSystemType ?tcaExportControlClassification ?targetDieThickness ?targetDieThicknessTolerance
+?backsideCoating ?backSideCoatingThickness ?backSideCoatingTolerance
+?filePOD (?markingInstructionName as ?assemblyMarkingName) ?assemblyMarkingDescription ?markingFormatName
+?markingNotes (?markingInstructionName as ?fileMarkingInstructionName)
+?markingFormatMatrixHeight_2D ?markingFormatMatrixWidth_2D ?markingFormatFromLine_2D
+?markingFormatToLine_2D ?markingFormatStartFromCharater_2D ?markingFormatWidth_2D
+?markingFormatFontSize ?markingFormatLogoPosition ?markingFormatLogoSize
+?markingFormatPin1Position ?maxNumberOfLines ?maxNumberOfCharactersPerLine ?maxNumberOfCharactersOnSubsequentLines
+?fileStageDocument ?assemblyFlowNotes ?intermediateTypes ?parentRemarks ?sawNote
+?markingContentMarkingLineA ?markingContentMarkingLineB ?markingContentMarkingLineC
+?markingContentMarkingLineD ?markingContentMarkingLineE ?markingContentMarkingLineF ?markingContentMarkingLineG
+?intermediateType ?intermediateName ?intermediateDesc ?backSideCoatingName ?backSideCoatingDesc
+?markingContentName ?markingContentDesc
+WHERE { 
+    ?parent a ?type;
+            plm:name "3400 001 52744";
+            plm:name ?parentNc12name;
+            plm:codingCentre ?parentCodingCentre;
+            plm:bom+ ?child;
+            plm:bom+ ?cebc;
+            ^plm:bom+ ?salesItem.
+
+    ?type rdfs:label ?parentType.
+    ?child a ?intermediates.
+    ?intermediates rdfs:label ?intermediateType.
+    
+    optional{?parent plm:assignedDocument ?markingContent.
+             ?markingContent a plm:MarkingContent;
+                             plm:name ?markingContentName.}
+    optional{?parent plm:assignedDocument ?markingContent.
+             ?markingContent a plm:MarkingContent;
+                             plm:description ?markingContentDesc.}
+    optional{?parent plm:assignedDocument ?markingContent.
+             ?markingContent a plm:MarkingContent;
+                             plm:remarks ?markingNotes.}
+    optional{?parent plm:assignedDocument ?markingContent.
+             ?markingContent a plm:MarkingContent;
+                             plm:markingLineA ?markingContentMarkingLineA.}
+    optional{?parent plm:assignedDocument ?markingContent.
+             ?markingContent a plm:MarkingContent;
+                             plm:markingLineB ?markingContentMarkingLineB.}
+    optional{?parent plm:assignedDocument ?markingContent.
+             ?markingContent a plm:MarkingContent;
+                             plm:markingLineC ?markingContentMarkingLineC.}
+    optional{?parent plm:assignedDocument ?markingContent.
+             ?markingContent a plm:MarkingContent;
+                             plm:markingLineD ?markingContentMarkingLineD.}
+    optional{?parent plm:assignedDocument ?markingContent.
+             ?markingContent a plm:MarkingContent;
+                             plm:markingLineE ?markingContentMarkingLineE.}
+    optional{?parent plm:assignedDocument ?markingContent.
+             ?markingContent a plm:MarkingContent;
+                             plm:markingLineF ?markingContentMarkingLineF.}
+    optional{?parent plm:assignedDocument ?markingContent.
+             ?markingContent a plm:MarkingContent;
+                             plm:markingLineG ?markingContentMarkingLineG.}
+
+
+    optional{?cebc a ?cebcType.
+             FILTER(?cebcType IN (plm:CEBC))
+             ?cebc plm:name ?backSideCoatingName.}
+    optional{?cebc a plm:CEBC;
+                   plm:description ?backSideCoatingDesc.}    
+
+    FILTER(?intermediates IN (plm:CESG, plm:CEBC, plm:CEGB, plm:CEGR, 
+                              plm:CESD, plm:CEMA, plm:CESF, plm:CESE, 
+                              plm:CEBU, plm:CEFT))
+    optional{?child plm:name ?intermediateName.}
+    optional {?child plm:description ?intermediateDesc.}
+
+    ?salesItem a plm:SalesItem;
+               plm:orderablePartNumber ?salesItemOPN;
+               plm:financialClassification/plm:financialClassification/plm:financialClassification/plm:financialClassification/plm:financialClassification/plm:financialClassification ?businessLine.
+    ?businessLine a plm:BusinessLine;
+                  plm:productClassificationShortName ?businessLineName.
+
+    optional{?parent plm:orderablePartNumber ?parentOPN.}
+    optional{?parent plm:crossManufacturingIndicator ?parentCMI.}
+    optional{?parent plm:state ?parentState.}
+    optional{?parent plm:remarks ?parentRemarks.}
+    optional{?parent plm:sawNote ?sawNote.}
+    optional{?parent plm:dieThickness_um_ ?targetDieThickness.}         
+    optional{?parent plm:dieThicknessTolerance_um_ ?targetDieThicknessTolerance.}         
+    optional{?parent plm:productSecurityIndicator ?productSecurityIndicator.}         
+    optional{?parent plm:harmonizedSystemType ?tcaHarmonizedSystemType  .}         
+    optional{?parent plm:description ?parentDescription.}
+    optional{?parent plm:legacyPartDescription ?parentLPNDesc. }
+    optional{?parent plm:legacyPartNumber ?parentLPN. }
+    optional{?salesItem plm:exportControlClassificationNumberOverruled ?tcaExportControlClassification.}
+
+    optional{?parent plm:assignedDocument ?markingInstruction.
+            ?markingInstruction a udm:MarkingInstruction;
+                                 udm:name ?markingInstructionName.
+            ?markingFormat  a udm:MarkingFormat;
+            udm:name ?markingFormatName;
+            udm:matrixHeight_2D ?markingFormatMatrixHeight_2D;
+            udm:matrixWidth_2D ?markingFormatMatrixWidth_2D;
+            udm:fromLine_2D ?markingFormatFromLine_2D;
+            udm:toLine_2D ?markingFormatToLine_2D;
+            udm:strartFromCharater_2D ?markingFormatStartFromCharater_2D;
+            udm:width_2D ?markingFormatWidth_2D;
+            udm:logoFontSize ?markingFormatFontSize;
+            udm:logoPosition ?markingFormatLogoPosition;
+            udm:logoSize ?markingFormatLogoSize;
+            udm:pin1_Position ?markingFormatPin1Position;
+            udm:maximumNumberOfLines ?maxNumberOfLines;
+            udm:maximumNumberOfCharactersPerLine ?maxNumberOfCharactersPerLine;
+            udm:maximumNumberOfCharactersOnSubsequentLines ?maxNumberOfCharactersOnSubsequentLines.}
+    
+
+    
+    optional{?parent plm:usedProcess ?bumpProcess. 
+             ?bumpProcess a plm:BumpProcess;  
+                          plm:backsideCoating ?backsideCoating.}
+    optional{?bumpProcess plm:coatingThickness_um_ ?backSideCoatingThickness.}
+    optional{?bumpProcess plm:coatingTolerance_um_ ?backSideCoatingTolerance.}
+    
+    optional{?parent plm:assignedDocument ?manufacturingDocument.
+             ?manufacturingDocument a plm:ManufacturingDocument;
+                                    plm:name ?fileStageDocument.}
+
+    optional{?parent plm:bom ?subpackage.
+             ?subpackage a plm:Subpackage;
+                         plm:uri ?assemblyFlow.
+            ?assemblyFlow a plm:AssemblyFlow;
+                          plm:remarks ?assemblyFlowNotes.}
+    FILTER(EXISTS {?cebc a ?cebcType.
+             FILTER(?cebcType IN (plm:CEBC))
+             ?cebc plm:name ?backSideCoatingName.}) 
+
+    BIND (IF ((?parentCMI  = 'Yes'),  "L-FSL",  (IF ((?codingCentre = 'CP-ATX-'),  "L-FSL",  "L-NXP")))  AS  ?productOriginClassification)
+ 
+} 

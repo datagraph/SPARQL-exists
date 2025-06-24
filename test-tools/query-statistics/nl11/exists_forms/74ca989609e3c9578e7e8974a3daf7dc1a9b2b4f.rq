@@ -1,0 +1,100 @@
+prefix schema: <http://schema.org/>
+prefix skos: <http://www.w3.org/2004/02/skos/core#>
+prefix nex: <http://www.data.nexperia.com/schema/>
+prefix nxp: <http://purl.org/nxp/schema/v1/>
+construct {
+  ?s ?p ?o_ ;
+    nex:automotiveQualified ?auto ;
+    schema:position ?rank ;
+    schema:breadcrumb ?bl .
+  ?bl a schema:BreadcrumbList ;
+    schema:itemListElement ?li_1 , ?li_2 , ?li_3 , ?li_n .
+  ?li_1 a schema:ListItem ;
+    schema:name ?c1_prefLabel_ ;
+    schema:position "1" ;
+    schema:item ?c1 .
+  ?li_2 a schema:ListItem ;
+    schema:name ?c2_prefLabel_ ;
+    schema:position "2" ;
+    schema:item ?c2 .
+  ?li_3 a schema:ListItem ;
+    schema:name ?c3_prefLabel_ ;
+    schema:position "3" ;
+    schema:item ?c3 .
+  ?li_n a schema:ListItem ;
+    schema:name ?s_prefLabel_ ;
+    schema:position ?n ;
+    schema:item ?s .
+}
+where {
+  service <http://localhost/nexperia/marketing-tree> {
+    graph <http://www.data.nexperia.com/id/projects/marketingTree> {
+      ?s nxp:publishToWeb "Yes" ;
+        nxp:ranking ?rank ;
+        skos:prefLabel ?s_prefLabel ;
+        ?p ?o .
+      filter (!bound($id) || strends(str(?s), concat("/", $id)))
+      filter strstarts(str(?p), str(skos:))
+
+      # test if group is categorized anywhere under "Automotive qualified products (AEC-Q100/Q101)" (1449353911606)
+      bind ( exists { <http://www.data.nexperia.com/id/concepts/1449353911606> skos:narrower* ?s } as ?auto)
+
+      # remove any language tags from strings
+      bind(if(isliteral(?o) && lang(?o) != "", str(?o), ?o) as ?o_)
+      bind(str(?s_prefLabel) as ?s_prefLabel_)
+
+      # determine all breadcrumbs to maximum depth of 4
+      {
+        ?s skos:topConceptOf [] .
+        bind("1" as ?n)
+        bind(bnode() as ?li_n)
+        bind(bnode() as ?bl)
+      }
+      union
+      {
+        ?s skos:broader ?c1 .
+        ?c1 skos:prefLabel ?c1_prefLabel ;
+          skos:topConceptOf [] .
+        bind("2" as ?n)
+        bind(bnode() as ?li_n)
+        bind(bnode() as ?li_1)
+        bind(bnode() as ?bl)
+        bind(str(?c1_prefLabel) as ?c1_prefLabel_)
+      }
+      union
+      {
+        ?s skos:broader ?c2 .
+        ?c2 skos:prefLabel ?c2_prefLabel ;
+          skos:broader ?c1 .
+        ?c1 skos:prefLabel ?c1_prefLabel ;
+          skos:topConceptOf [] .
+        bind("3" as ?n)
+        bind(bnode() as ?li_n)
+        bind(bnode() as ?li_1)
+        bind(bnode() as ?li_2)
+        bind(bnode() as ?bl)
+        bind(str(?c1_prefLabel) as ?c1_prefLabel_)
+        bind(str(?c2_prefLabel) as ?c2_prefLabel_)
+      }
+      union
+      {
+        ?s skos:broader ?c3 .
+        ?c3 skos:prefLabel ?c3_prefLabel ;
+           skos:broader ?c2 .
+        ?c2 skos:prefLabel ?c2_prefLabel ;
+          skos:broader ?c1 .
+        ?c1 skos:prefLabel ?c1_prefLabel ;
+          skos:topConceptOf [] .
+        bind("4" as ?n)
+        bind(bnode() as ?li_n)
+        bind(bnode() as ?li_1)
+        bind(bnode() as ?li_2)
+        bind(bnode() as ?li_3)
+        bind(bnode() as ?bl)
+        bind(str(?c1_prefLabel) as ?c1_prefLabel_)
+        bind(str(?c2_prefLabel) as ?c2_prefLabel_)
+        bind(str(?c3_prefLabel) as ?c3_prefLabel_)
+      }
+    }
+  }
+}

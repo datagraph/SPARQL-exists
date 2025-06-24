@@ -1,0 +1,14 @@
+prefix plm: <http://data.nxp.com/def/plm/>
+#ASK ?basicType WHERE   {
+SELECT ?bt ?exist WHERE{
+  SERVICE <http://localhost/nxp/plm> {
+    GRAPH ?g{
+  	  ?bt a plm:BasicType ;
+	#	  plm:name "MTRCKTSBN5675K";
+       plm:name $basicType
+#values $basicType {   }
+BIND(EXISTS{?bt plm:name  "MTRCKTSBN5675K"} AS ?exist)
+
+	  }
+   } 
+}

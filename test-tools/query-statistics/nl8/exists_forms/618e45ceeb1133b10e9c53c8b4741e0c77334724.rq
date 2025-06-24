@@ -1,0 +1,21 @@
+PREFIX plm: <http://data.nxp.com/def/plm/>
+PREFIX udm: <http://data.nxp.com/def/udm/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+ASK
+FROM <urn:dydra:all>
+WHERE {
+  ?NotificationItem a ?NotificationItem_type ;
+    plm:state|udm:lifecycle ?NotificationItem_lifecycleState .
+  filter(?NotificationItem_type in (
+    plm:SalesItem,
+    plm:PackingMethod,
+    plm:Subpackage,
+    plm:Die,
+    plm:DiffusionProcess,
+    plm:Module,
+    plm:IC,
+    udm:TestStage,
+    udm:TestFlow
+  ))
+  filter(?NotificationItem_lifecycleState not in ("OBS", "WIT", udm:Lifecycle-WIT, udm:Lifecycle-OBS) || exists { ?ECO plm:changedItem|udm:changedItem ?NotificationItem })
+}

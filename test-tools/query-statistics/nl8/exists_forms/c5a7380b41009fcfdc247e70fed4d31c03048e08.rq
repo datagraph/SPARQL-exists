@@ -1,0 +1,59 @@
+prefix plm: <http://data.nxp.com/def/plm/>
+prefix udm: <http://data.nxp.com/def/udm/>
+prefix ie-mdm: <http://data.nxp.com/def/ie-mdm/>
+
+# EXAMPLE   ICAM: 3400 000 60632, 3400 000 67311, 3400 000 66463, 3400 000 66580, 3400 000 68676
+# EXAMPLE   MOMA: 3400 000 46082, 3312 169 95771, 3400 000 00285, 3400 000 23793, 3400 000 22742
+
+SELECT DISTINCT
+?subPackageName ?subPackageDesc ?subPackageLPN ?subPackageLPNDesc
+?adhesiveName ?adhesiveDesc ?adhesiveLPN ?adhesiveLPNDesc
+?leadFrameName ?leadFrameDesc ?leadFrameLPN ?leadFrameLPNDesc
+?mouldCompoundName ?mouldCompoundDesc ?mouldCompoundLPN ?mouldCompoundLPNDesc
+?chipCoatName ?chipCoatDesc ?chipCoatLPN ?chipCoatLPNDesc
+?heatSpreaderName ?heatSpreaderDesc ?heatSpreaderLPN ?heatSpreaderLPNDesc
+?povManufacturingDocName ?povManufacturingDocDesc ?povManufacturingDocFile ?markingCharacterAssemblyCentre
+from <urn:dydra:all>
+WHERE { 
+        ?parent plm:name "3400 001 92196";
+                plm:qualifiedRelation ?qualifiedRelation.
+
+        ?qualifiedRelation a plm:Relation,plm:BOM;
+                           plm:target ?subPackage.
+        ?subPackage a plm:Subpackage;
+                    plm:name ?subPackageName.
+
+        optional{?subPackage plm:description ?subPackageDesc.}
+        optional{?subPackage plm:legacyPartNumber ?subPackageLPN.}
+        optional{?subPackage plm:legacyPartDescription ?subPackageLPNDesc.}
+        {{
+            select ?subPackage ?adhesiveName ?adhesiveDesc ?adhesiveLPN ?adhesiveLPNDesc where {
+                ?subPackage plm:bom ?bom.
+                optional{?bom a plm:Adhesive;
+                              plm:name ?adhesiveName.}
+                optional{?bom a plm:Adhesive;
+                              plm:description ?adhesiveDesc.}
+                optional{?bom a plm:Adhesive;
+                              plm:legacyPartNumber ?adhesiveLPN.}
+                optional{?bom a plm:Adhesive;
+                              plm:legacyPartDescription ?adhesiveLPNDesc.}
+                FILTER EXISTS { ?bom a plm:Adhesive;
+                                    plm:name ?adhesiveName.}
+            }
+        }}
+        {{
+            select ?subPackage ?leadFrameName ?leadFrameDesc ?leadFrameLPN ?leadFrameLPNDesc where {
+                ?subPackage plm:bom ?bom.
+                optional{?bom a plm:LeadFrame;
+                     plm:name ?leadFrameName.}
+                optional{?bom a plm:LeadFrame;
+                              plm:description ?leadFrameDesc.}
+                optional{?bom a plm:LeadFrame;
+                              plm:legacyPartNumber ?leadFrameLPN.}
+                optional{?bom a plm:LeadFrame;
+                              plm:legacyPartDescription ?leadFrameLPNDesc.}
+            }
+        }}
+        
+        
+} 

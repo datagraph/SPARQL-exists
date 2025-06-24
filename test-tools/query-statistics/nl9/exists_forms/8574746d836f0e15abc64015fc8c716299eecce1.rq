@@ -1,0 +1,9 @@
+PREFIX udm: <http://data.nxp.com/def/udm/>
+ 
+SELECT
+  (IF(EXISTS {<http://data.nxp.com/id/plm/TestFlow/540000035333> udm:processDecomposition/udm:processDecomposition <http://data.nxp.com/id/plm/TestStage/540000225405> .},"FALSE","TRUE") AS ?Disconnected_TF_Flag)
+FROM <urn:dydra:all>
+WHERE {
+<http://data.nxp.com/id/plm/TestFlow/540000035333> a udm:TestFlow .
+}
+LIMIT 10

@@ -1,0 +1,6 @@
+SELECT DISTINCT ?s
+from <urn:dydra:all>
+WHERE {
+  ?s ?p ?o .  # Find all objects ?o
+  FILTER EXISTS { ?anySubject ?anyPredicate ?s }  # Ensure ?o is not a subject
+} limit 10

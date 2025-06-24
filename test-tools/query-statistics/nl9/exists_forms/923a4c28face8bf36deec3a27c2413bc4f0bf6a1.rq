@@ -1,0 +1,18 @@
+prefix plm: <http://data.nxp.com/def/plm/>
+prefix udm: <http://data.nxp.com/def/udm/>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix : <urn:dydra:>
+
+select distinct ?child
+  ( exists{
+    {
+      ?child plm:hasLocation/plm:vendorCode $vendorCode .
+    } union {
+      ?child plm:usedProcess/(plm:hasLocation|udm:hasLocation)/plm:vendorCode $vendorCode .
+    }
+  } as ?childAuthenticated )
+from <urn:dydra:all>
+where {
+  $parent plm:bom ?child .
+  values $vendorCode {}
+}

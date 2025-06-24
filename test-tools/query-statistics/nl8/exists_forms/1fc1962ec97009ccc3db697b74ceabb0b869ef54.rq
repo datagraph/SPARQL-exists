@@ -1,0 +1,9 @@
+prefix udm: <http://data.nxp.com/def/udm/>
+PREFIX plm: <http://data.nxp.com/def/plm/>
+SELECT *  
+from <urn:dydra:all>
+WHERE {
+  ?s a udm:TestCentre .
+  FILTER EXISTS {
+  ?testflow a udm:TestStage ; ?p ?s .
+} } limit 10

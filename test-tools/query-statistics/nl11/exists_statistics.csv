@@ -1,0 +1,7 @@
+hash,count,complexity,operators,form
+3501d01716df9fa45eea2b8eab4d9a446e437887,31,0,,"EXISTS {\n  ?v0 <http://example.org/x0> ?v1 .\n}"
+0641c448fa739117528ca769eae238ae6594abcc,4,1,,"EXISTS {\n  ?v0 <http://example.org/x0> _:b0 .\n  <http://example.org/x1> ? _:b0 .\n}"
+16553d2e6183a3a869e36b48309220aee2784ab0,7,0,,"EXISTS {\n  <http://example.org/x0> <http://example.org/x1> ?v0 .\n}"
+74ca989609e3c9578e7e8974a3daf7dc1a9b2b4f,4,0,,"EXISTS {\n  <http://example.org/x0> ? ?v0 .\n}"
+36c1d39af8efb9806da8b959a4b183e13d9c2312,2,0,,"EXISTS {\n  ?v0 <http://example.org/x0> _:b0 .\n  <http://example.org/x2> ? _:b0 .\n}"
+2f70b880c82af5b5e72cedeada720ab69007a3f5,1,0,,"EXISTS {\n  ?v0 <http://example.org/x0> ?v1 .\n  <http://example.org/x2> ? ?v1 .\n}"

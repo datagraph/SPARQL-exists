@@ -1,0 +1,4 @@
+Total queries processed : 479381
+Total EXISTS occurrences: 123
+Distinct EXISTS forms   : 13
+Average complexity      : 1.00

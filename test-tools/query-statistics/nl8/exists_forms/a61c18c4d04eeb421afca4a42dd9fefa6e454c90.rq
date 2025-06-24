@@ -1,0 +1,17 @@
+prefix plm: <http://data.nxp.com/def/plm/>
+prefix udm: <http://data.nxp.com/def/udm/>
+
+SELECT ?packingMethod
+       (IF(BOUND(?si), "Yes", "No") AS ?Packing_Method_Connected_To_SalesItem)
+       (IF(EXISTS {
+  		?obsItem a plm:SalesItem ;
+					plm:BOM ?packingMethod ;
+                     plm:state "OBS" .
+        }, "Yes", "No") AS ?Packing_Method_Connected_To_SalesItem_OBS)
+WHERE {
+  ?packingMethod a plm:PackingMethod .
+  OPTIONAL {    
+	?si a plm:SalesItem ;
+		  plm:BOM ?packingMethod .
+  }
+}

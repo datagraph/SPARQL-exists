@@ -1,0 +1,97 @@
+prefix plm: <http://data.nxp.com/def/plm/>
+prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+#select distinct ?option ?MATERIAL_FG_ID ?DOCUMENT_ID ?DOCUMENT_DESCRIPTION
+#?PLANT_CD ?WIRE_ID ?WIRE_DESCRIPTION ?WIRE_MTRL_TXT ?WIRE_DIAMETER_UM_TXT
+#?WIRE_DIAMETER_MM_TXT ?CREATION_DATE ?UPDATE_DATE ?origin
+select (count(*) as ?c)
+from <urn:dydra:all>
+where {
+  {
+    select distinct *
+    where {
+      {
+        select distinct *
+        where {
+          ?ASSEMBLY_GROUP a plm:ICAM ;
+            plm:name ?ASSEMBLY_GROUP_ID ;
+            #plm:bom ?WIRE , ?SUBPACKAGE ;
+            plm:assignedDocument ?DOCUMENT .
+
+          optional { ?ASSEMBLY_GROUP plm:hasLocation [ plm:name ?ASSEMBLY_GROUP_PLANT_CD ] }
+
+          ?DOCUMENT a plm:WiringDiagram ;
+            plm:name ?DOCUMENT_ID ;
+            plm:description ?DOCUMENT_DESCRIPTION ;
+            plm:startEffectivityDate ?CREATION_DATE .
+
+          #optional {
+          #  ?ASSEMBLY_GROUP plm:qualifiedRelation [ a plm:AssignedDocument ; plm:target ?DOCUMENT ; plm:option ?DOCUMENT_option ] .
+          #}
+
+          { select * {
+            ?ASSEMBLY_GROUP plm:bom ?WIRE .
+
+            ?WIRE a plm:Wire ;
+              plm:name ?WIRE_ID ;
+              plm:description ?WIRE_DESCRIPTION ;
+              plm:wireDiameter_um_ ?WIRE_DIAMETER_UM_TXT .
+
+            #optional {
+            #  ?ASSEMBLY_GROUP plm:qualifiedRelation [ a plm:BOM ; plm:target ?WIRE ; plm:option ?WIRE_option ] .
+            #}
+
+            bind (xsd:decimal(?WIRE_DIAMETER_UM_TXT) * 0.001 as ?WIRE_DIAMETER_MM_TXT)
+          }}
+
+          { select * {
+            ?ASSEMBLY_GROUP plm:bom ?SUBPACKAGE .
+
+            ?SUBPACKAGE a plm:Subpackage ;
+              plm:hasLocation [ plm:name ?SUBPACKAGE_PLANT_CD ] .
+
+            #optional {
+            #  ?ASSEMBLY_GROUP plm:qualifiedRelation [ a plm:BOM ; plm:target ?SUBPACKAGE ; plm:option ?SUBPACKAGE_option ] .
+            #}
+          }}
+
+          #bind (coalesce(?WIRE_option, ?DOCUMENT_option, ?SUBPACKAGE_option, "n/a") as ?option)
+          #filter (!bound(?WIRE_option) || ?WIRE_option = ?option)
+          #filter (!bound(?DOCUMENT_option) || ?DOCUMENT_option = ?option)
+          #filter (!bound(?SUBPACKAGE_option) || ?SUBPACKAGE_option = ?option)
+
+          optional {
+            ?ASSEMBLY_GROUP plm:qualifiedRelation [ a plm:BOM ; plm:option ?option ] .
+          }
+          filter (
+            #!bound(?option) ||
+            not exists { ?ASSEMBLY_GROUP plm:qualifiedRelation [ a plm:BOM ; plm:target ?WIRE ; plm:option [] ] } ||
+            exists { ?ASSEMBLY_GROUP plm:qualifiedRelation [ a plm:BOM ; plm:target ?WIRE ; plm:option ?option ] }
+          )
+          filter (
+            #!bound(?option) ||
+            not exists { ?ASSEMBLY_GROUP plm:qualifiedRelation [ a plm:AssignedDocument ; plm:target ?DOCUMENT ; plm:option [] ] } ||
+            exists { ?ASSEMBLY_GROUP plm:qualifiedRelation [ a plm:AssignedDocument ; plm:target ?DOCUMENT ; plm:option ?option ] }
+          )
+          filter (
+            #!bound(?option) ||
+            not exists { ?ASSEMBLY_GROUP plm:qualifiedRelation [ a plm:BOM ; plm:target ?SUBPACKAGE ; plm:option [] ] } ||
+            exists { ?ASSEMBLY_GROUP plm:qualifiedRelation [ a plm:BOM ; plm:target ?SUBPACKAGE ; plm:option ?option ] }
+          )
+        }
+      }
+#      ?MATERIAL_FG plm:bom+ ?ASSEMBLY_GROUP .
+    }
+  }
+
+#  ?MATERIAL_FG a plm:SalesItem ;
+#    plm:name ?MATERIAL_FG_ID .
+#
+#  optional { ?MATERIAL_FG plm:codingCentre ?coding_centre }
+#
+#  # location of assembly group OR location subpackage in bom of assembly group (and no location of assembly group)
+#  bind (COALESCE(?ASSEMBLY_GROUP_PLANT_CD, ?SUBPACKAGE_PLANT_CD) as ?PLANT_CD)
+#
+#  bind (now() as ?UPDATE_DATE)
+#  bind (if(bound(?coding_centre) && ?coding_centre in ("CP-ATX-01", "CP-ATX-02"), "XFSL", "ENOVIA") as ?origin)
+}
+#limit 100

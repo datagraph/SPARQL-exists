@@ -1,0 +1,253 @@
+prefix schema: <http://schema.org/>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix skos: <http://www.w3.org/2004/02/skos/core#>
+prefix spc: <http://www.data.nexperia.com/def/spc/>
+prefix nex: <http://www.data.nexperia.com/schema/>
+prefix nxp: <http://purl.org/nxp/schema/v1/>
+prefix plm: <http://www.data.nexperia.com/def/plm/>
+prefix cc: <http://www.data.nexperia.com/def/common-core/>
+prefix ss: <http://www.data.nexperia.com/def/SpiderSpaces/>
+prefix cms: <http://www.data.nexperia.com/def/cms/>
+
+construct {
+  ?bt a nex:BasicType ;
+    schema:name $id ;
+    schema:description ?description ;
+    schema:category ?category ;
+    schema:mainEntityOfPage ?homepage ;
+    schema:hasVariant ?si ;
+    schema:isVariantOf ?group ;
+    schema:predecessorOf ?recommendedReplacement ;
+    schema:additionalProperty ?additionalProperty_s ;
+    nex:state ?state_ ;
+    nex:package ?publicPackageIri ;
+    nex:recommendedForNewDesigns ?rnd ;
+    nex:pipType ?pipTypeLabel ;
+    nex:category ?parentCategory ;
+    nex:automotiveQualified ?auto ;
+  .
+
+  ?additionalProperty_s ?additionalProperty_p ?additionalProperty_o .
+
+  ?si a nex:SalesItem ;
+    schema:name ?si_mpn ;
+    schema:alternateName ?si_alternateName ;
+    schema:mpn ?si_mpn ;
+    nex:markingCode ?pt_markingCodes ;
+    nex:state ?si_state ;
+    nex:packingQuantity ?si_packingQuantity ;
+    nex:packingDescription ?packingDescription ;
+    nex:rhf-2006 ?si_rhf2006 ;
+    nex:moistureSensitivityLevel ?si_msl ;
+    nex:moistureSensitivityLevelLeadfree ?si_msllf ;
+  .
+}
+where {
+  # use $id as the parameter, being the basic type name
+  # query runs against public-data repo and federates to other repos
+
+  service <http://localhost/nexperia/plm> {
+    graph <urn:dydra:all> {
+      ?bt a plm:BasicType ;
+        plm:name $id ;
+        plm:customerSpecificIndicator "No" ;
+      .
+
+      # remove third party wafers (BU 0541)
+      minus {
+        $id ^plm:name/^plm:productClassification/^plm:productClassification/plm:financialClassification/plm:financialClassification/plm:financialClassification/plm:financialClassification/plm:financialClassification/plm:financialClassification/plm:financialClassification/plm:name "0541" .
+      }
+
+      # test if product is categorized anywhere under "Automotive qualified products (AEC-Q100/Q101)" (1449353911606)
+      # we can safely use exists as the number of distinct bindings for ?bt should be one
+      bind(exists{
+        service <http://localhost/nexperia/marketing-tree> {
+          graph <http://www.data.nexperia.com/linkset/basic_types-2-marketing_tree> {
+            ?bt nxp:marketingCategory _:category .
+          }
+          graph <http://www.data.nexperia.com/id/projects/marketingTree> {
+            <http://www.data.nexperia.com/id/concepts/1449353911606> skos:narrower* _:category .
+          }
+        }
+      } as ?auto)
+
+      optional {
+        ?pt plm:productClassification ?bt .
+        optional {
+          service <http://localhost/nexperia/marking-codes> {
+            select ?pt (group_concat(?pt_markingCode) as ?pt_markingCodes)
+            where {
+              ?pt plm:markingCode ?pt_markingCode .
+            }
+            group by ?pt
+          }
+        }
+
+        ?si a plm:SalesItem ;
+          plm:name ?si_alternateName ;
+          plm:orderablePartNumber ?si_mpn ;
+          plm:productClassification ?pt ;
+          plm:customerSpecificIndicator "No" ;
+          plm:state ?si_state ;
+        .
+        optional {
+          ?si plm:packingQuantity ?si_packingQuantity .
+        }
+        optional {
+          ?si plm:rhf-2006 ?si_rhf2006 .
+        }
+        optional {
+          ?si plm:moistureSensitivityLevel ?si_msl .
+        }
+        optional {
+          ?si plm:moistureSensitivityLevelLeadfree ?si_msllf .
+        }
+        optional {
+          # find the description of the Packing Type
+          ?si plm:requires ?packing .
+          ?packing a plm:PackingType ;
+            plm:name ?packingName .
+          optional {
+            service <http://localhost/nexperia/spc> {
+              graph <urn:dydra:all> {
+                [] a spc:C_AAA247 ;
+                  rdfs:label ?packingName ;
+                  spc:P_AAD351 ?packingDescription1 .
+              }
+            }
+          }
+        }
+        optional {
+          # find the description of the Outline Packing
+          ?si plm:bom ?outlinePacking .
+          ?outlinePacking a plm:OutlinePacking .
+          service <http://localhost/nexperia/packing> {
+            ?outlinePacking schema:description ?packingDescription2 .
+          }
+        }
+        # if the Outline Packing has a description, use it, otherwise use descripton of Packing Type, otherwise a hyphen
+        bind(coalesce(?packingDescription2, ?packingDescription1) as ?packingDescription)
+      }
+    }
+  }
+
+  service <http://localhost/nexperia/marketing-tree> {
+    graph <urn:nxp:spider:product> {
+      ?bt nxp:publishToWeb true ; # the basic type must be published to web
+        nxp:productStatus ?state .
+      bind(strafter(str(?state), "http://purl.org/nxp/schema/v1/") as ?state_)
+    }
+
+    # optionally match the PIP type
+    optional {
+      graph <urn:nxp:spider:product> {
+        ?bt nxp:pipType ?pipType .
+      }
+      service <http://localhost/nexperia/schema> {
+        ?pipType a nxp:PipType ;
+          rdfs:label ?pipTypeLabel .
+      }
+    }
+
+    # optionally lookup the marketing category
+    optional {
+      graph <http://www.data.nexperia.com/linkset/basic_types-2-marketing_tree> {
+        ?bt nxp:marketingCategory ?category .
+      }
+      graph <http://www.data.nexperia.com/id/projects/marketingTree> {
+        ?category nxp:publishToWeb "Yes" .
+        optional {
+          ?category skos:broader* ?parentCategory .
+          ?parentCategory nxp:publishToWeb "Yes" .
+        }
+      }
+    }
+
+    # optionally match the RND
+    optional {
+      graph <urn:nxp:spider:product> {
+        ?bt nxp:recommendedForNewDesigns ?rnd .
+      }
+    }
+
+    # optionally match the replacement
+    optional {
+      graph <urn:nxp:spider:product> {
+        ?bt nxp:recommendedReplacement ?recommendedReplacement .
+        ?recommendedReplacement nxp:publishToWeb true . # the replacement must be published to web
+      }
+    }
+  }
+
+  # optionally lookup the descriptive title of related english-language VP
+  optional {
+    service <http://localhost/nexperia/published-files> {
+      graph <urn:dydra:named> {
+        ?vp cc:type "Value proposition" ;
+          cms:basicType $id ;
+          ss:descriptiveTitle ?description ;
+          schema:inLanguage ?lang ;
+        .
+        filter (?lang in ("en", "en_US"))
+      }
+    }
+  }
+
+  # optionally lookup the package
+  optional {
+    # federate to the view to lookup the ?pov for the btn $id
+    service <http://localhost/nexperia/plm/btn-pov> {}
+  }
+  optional {
+    service <http://localhost/nexperia/spc> {
+      graph <urn:dydra:all> {
+        [] rdfs:label $id ;
+          spc:P_AAD324/rdfs:label ?PackageItem_label .
+      }
+    }
+  }
+
+  # optionally lookup the groups
+  optional {
+    graph <urn:dydra:named> {
+      ?group skos:member/nxp:typeNumber $id .
+    }
+  }
+
+  # optionally add parametric data
+  optional {
+    service <http://localhost/nexperia/web-parametrics> {
+      # only include parametric data for a single leaf category
+      {
+        select (min(?graph_px) as ?graph_px) $id {
+          graph ?graph_px {
+            # match headers where table contains product $id
+            ?bt schema:name $id ;
+              schema:additionalProperty [] .
+            ?header a schema:ItemList ;
+              schema:about ?category .
+            service <http://localhost/nexperia/marketing-tree> {
+              graph <http://www.data.nexperia.com/id/projects/marketingTree> {
+                # match only published leaf categories
+                ?category nxp:publishToWeb "Yes" .
+                minus { ?category skos:narrower [] }
+              }
+            }
+          }
+        }
+        group by $id
+      }
+      graph ?graph_px {
+        ?bt schema:name $id ;
+          schema:additionalProperty ?additionalProperty_s .
+        ?additionalProperty_s ?additionalProperty_p ?additionalProperty_o .
+      }
+    }
+  }
+
+  # build public package iri using the label
+  # use the PLM package, otherwise the SPC package
+  bind(iri(concat("http://www.data.nexperia.com/id/packages/", encode_for_uri(coalesce(?pov, ?PackageItem_label)))) as ?publicPackageIri)
+
+  bind(iri(concat("https://www.nexperia.com/product/", $id)) as ?homepage)
+}

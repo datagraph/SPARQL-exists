@@ -1,0 +1,15 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX sh: <http://www.w3.org/ns/shacl#>
+PREFIX plm: <http://data.nxp.com/def/plm/>
+PREFIX udm: <http://data.nxp.com/def/udm/>
+ 
+select ?s ?type
+from <urn:dydra:all>
+where { 
+?s a ?type .
+  #Not to add POD ,PID as assignedDocument
+FILTER (
+    ?type NOT IN (udm:PackageOutlineDocument, udm:PackingInformationDocument) ||
+    ( ?type IN (udm:PackageOutlineDocument, udm:PackingInformationDocument) &&  EXISTS { ?s a plm:ManufacturingDocument } )
+)
+}

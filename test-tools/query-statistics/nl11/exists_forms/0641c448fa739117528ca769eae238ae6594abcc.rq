@@ -1,0 +1,31 @@
+prefix schema: <http://schema.org/>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix skos: <http://www.w3.org/2004/02/skos/core#>
+prefix spc: <http://www.data.nexperia.com/def/spc/>
+prefix nex: <http://www.data.nexperia.com/schema/>
+prefix nxp: <http://purl.org/nxp/schema/v1/>
+prefix plm: <http://www.data.nexperia.com/def/plm/>
+prefix cc: <http://www.data.nexperia.com/def/common-core/>
+prefix ss: <http://www.data.nexperia.com/def/SpiderSpaces/>
+prefix cms: <http://www.data.nexperia.com/def/cms/>
+
+select *
+where {
+    graph <urn:dydra:all> {
+      ?bt a plm:BasicType ;
+        plm:name "BAS316-Q" ;
+        plm:customerSpecificIndicator "No" ;
+      .
+
+      # test if product is categorized anywhere under "Automotive qualified products (AEC-Q100/Q101)" (1449353911606)
+      # we can safely use exists as the number of distinct bindings for ?bt should be one
+      bind(exists{
+        service <http://localhost/nexperia/marketing-tree> {
+          graph <urn:dydra:all> {
+            ?bt nxp:marketingCategory _:category .
+            <http://www.data.nexperia.com/id/concepts/1449353911606> skos:narrower* _:category .
+          }
+        }
+      } as ?auto)
+    }
+}

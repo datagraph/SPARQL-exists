@@ -1,0 +1,192 @@
+PREFIX ie-mdm: <https://data.nxp.com/def/ie-mdm/>
+PREFIX plm:    <http://data.nxp.com/def/plm/>
+PREFIX udm:    <http://data.nxp.com/def/udm/>
+PREFIX rdfs:   <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX sh:     <http://www.w3.org/ns/shacl#>
+
+SELECT DISTINCT
+  ?FROMOBJECT
+  ?FROMOBJECTKEY
+  ?TOOBJECT
+  ?TOOBJECTKEY
+  (coalesce(?role, "") as ?CFGROLE)
+  (coalesce(?option, "") as ?CFGOPTION)
+  ?RELATION
+WHERE {
+  # Resource (FROMOBJECT) details
+  ?Resource a ?ResourceType .
+  [] sh:targetClass ?ResourceType ;
+    sh:name ?FROMOBJECT .
+  OPTIONAL { ?Resource plm:name ?resource_name }
+  OPTIONAL {
+    ?Resource udm:number ?resource_number .
+
+    # Format 12NC
+    BIND (
+      if (
+        regex(str(?resource_number), "^[0-9]{12}$"),
+        concat(
+          substr(str(?resource_number),1,4),
+          " ",
+          substr(str(?resource_number),5,3),
+          " ",
+          substr(str(?resource_number),8,5)
+        ),
+        ?resource_number
+      )
+      as ?resource_number_formatted
+    )
+  }
+  BIND (
+    coalesce(
+      ?resource_name,
+      ?resource_number_formatted,
+      replace(str(?Resource), ".+/([^/]+)$", "$1") # parse URI, if name and number not present
+    )
+    as ?FROMOBJECTKEY
+  )
+
+  # Custom filter for hardware board objects
+  FILTER (
+    (?ResourceType not in (udm:SubAssembly, udm:PrintedWiringAssembly, udm:PackoutHW, udm:PackingList)) ||
+    EXISTS {
+      ?Resource udm:bomRelation*/udm:description ?description .
+      FILTER ( contains(?description, "PIB") || contains(?description, "Main PCB") )
+    }
+  )
+
+  {
+    {
+      # PLM
+      VALUES (?property ?RelationType ?RELATION) {
+        (plm:assemblyFlowUri UNDEF "Assembly Flow URI")
+        (plm:assignedDocument plm:AssignedDocument "Assigned Document")
+        (plm:bom plm:BOM "BOM")
+        (plm:externalClassification UNDEF "External Classification")
+        (plm:financialClassification UNDEF "Financial Classification")
+        (plm:hasLocation plm:HasLocation "Has Location")
+        (plm:manufacturedBy plm:ManufacturedBy "Manufactured By")
+        (plm:packageClassification plm:PackageClassification "Package Classification")
+        (plm:packingClassification UNDEF "Packing Classification")
+        (plm:productClassification UNDEF "Product Classification")
+        (plm:requires UNDEF "Requires")
+        (plm:scsubstitute UNDEF "SCSubstitute")
+        (plm:serviceInfo plm:ServiceInfo "ServiceInfo")
+        (plm:specifiedBy plm:SpecifiedBy "Specified By")
+        (plm:suppliedAs UNDEF "Supplied As")
+        (plm:testerClassification UNDEF "Tester Classification")
+        (plm:usedProcess plm:UsedProcess "Used Process")
+        (plm:usedTool plm:UsedTool "Used Tool")
+        (plm:usesEquipment UNDEF "Uses Equipment")
+      }
+
+      ?Resource ?property ?Target .
+      FILTER EXISTS {
+        ?Resource a ?Type .
+        FILTER strstarts(str(?Type), str(plm:))
+      }
+    } UNION {
+      # UDM
+      VALUES (?property ?RelationType ?RELATION) {
+        (udm:bomRelation udm:BOMRelation "BOM")
+        (udm:hasLocation udm:HasLocation "Has Location")
+        (udm:markingFormatLine udm:MarkingFormatLine "Marking Format Line")
+        (udm:usesHardware udm:UsesHardware "Uses Hardware")
+        (udm:usesInstruction udm:UsesInstruction "Uses Instruction")
+        (udm:usesEquipment UNDEF "Uses Equipment")
+        (udm:usesRange udm:UsesRange "Uses Range")
+        (udm:processDecomposition udm:ProcessDecomposition "Process Decomposition")
+      }
+
+      ?Resource ?property ?Target .
+      MINUS {
+        ?Resource a ?Type .
+        FILTER strstarts(str(?Type), str(plm:))
+      }
+    }
+
+    # Qualified relation details
+    OPTIONAL {
+      ?Resource plm:qualifiedRelation|udm:qualifiedRelation ?Relation .
+      ?Relation a ?RelationType ;
+        plm:target|udm:target ?Target .
+      OPTIONAL { ?Relation plm:option ?option }
+      OPTIONAL { ?Relation plm:role ?role }
+    }
+  } UNION {
+    # Custom mapping for qualified relation
+    VALUES ?RelationType {
+      udm:ProcessDecomposition
+      udm:MarkingInstructionLine
+      udm:MarkingFormatLine
+    }
+    [] sh:targetClass ?RelationType .
+    {
+      BIND ( "Qualified Relation" as ?RELATION )
+      ?Resource udm:qualifiedRelation ?Target .
+      ?Target a ?RelationType .
+    } UNION {
+      BIND ( "Target" as ?RELATION )
+      ?Resource a ?RelationType ;
+        udm:target ?Target .
+    }
+
+    # Custom filter for Process Decomposition Relation
+    FILTER (
+      ?RelationType != udm:ProcessDecomposition ||
+      EXISTS { ?Resource a udm:AssemblyFlow } ||
+      EXISTS { ?Resource a udm:TestFlow } ||
+      EXISTS { [] a udm:AssemblyFlow ; udm:qualifiedRelation ?Resource } ||
+      EXISTS { [] a udm:TestFlow ; udm:qualifiedRelation ?Resource }
+    )
+  }
+
+  # Target (TOOBJECT) details
+  {
+    # PLM/UDM
+    ?Target a ?TargetType .
+    [] sh:targetClass ?TargetType ;
+      sh:name ?TOOBJECT .
+    OPTIONAL { ?Target plm:name ?target_name }
+    OPTIONAL {
+      ?Target udm:number ?target_number .
+
+      # Format 12NC
+      BIND (
+        if (
+          regex(str(?target_number), "^[0-9]{12}$"),
+          concat(
+            substr(str(?target_number),1,4),
+            " ",
+            substr(str(?target_number),5,3),
+            " ",
+            substr(str(?target_number),8,5)
+          ),
+          ?target_number
+        )
+        as ?target_number_formatted
+      )
+    }
+    BIND (
+      coalesce(
+        ?target_name,
+        ?target_number_formatted,
+        replace(str(?Target), ".+/([^/]+)$", "$1") # parse URI, if name and number not present
+      )
+      as ?TOOBJECTKEY
+    )
+
+    # Custom filter for hardware board objects
+    FILTER (
+      (?TargetType not in (udm:SubAssembly, udm:PrintedWiringAssembly, udm:PackoutHW, udm:PackingList)) ||
+      EXISTS {
+        ?Resource udm:bomRelation*/udm:description ?HWBOM_description .
+        FILTER ( contains(?HWBOM_description, "PIB") || contains(?HWBOM_description, "Main PCB") )
+      }
+    )
+  } UNION {
+    # IE-MDM
+    ?Target ie-mdm:identifier ?TOOBJECTKEY ;
+      ie-mdm:type ?TOOBJECT .
+  }
+}

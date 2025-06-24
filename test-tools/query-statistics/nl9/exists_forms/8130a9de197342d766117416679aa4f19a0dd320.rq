@@ -1,0 +1,21 @@
+prefix oslc: <http://open-services.net/ns/core#>
+prefix dc: <http://purl.org/dc/terms/>
+
+select distinct
+  $Class
+  ?ResourceShape
+  ?Name
+  ?Title
+  ?Property
+  ?SameAs
+  ?SameAs_Property
+  ?enumerationType
+where {
+  graph ?g {
+    ?ResourceShape oslc:describes $Class ;
+      oslc:property ?PropertyShape .
+    ?PropertyShape oslc:name ?Name .
+
+    bind (exists { ?PropertyShape oslc:allowedValue [] } as ?enumerationType )
+  }
+}

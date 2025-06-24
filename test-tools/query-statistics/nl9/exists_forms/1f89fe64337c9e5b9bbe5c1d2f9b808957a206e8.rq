@@ -1,0 +1,20 @@
+prefix ie-mdm: <https://data.nxp.com/def/ie-mdm/>
+prefix udm: <http://data.nxp.com/def/udm/>
+prefix plm: <http://data.nxp.com/def/plm/>
+
+select distinct ?PlanVariantOf ?mdmStepTestStage ?flag
+from <urn:dydra:all>
+{ 
+BIND(<http://data.nxp.com/id/plm/TestFlow/540000066235> AS ?PlanVariantOf)
+    ?mdmUsageRate a ie-mdm:UsageRate;
+    ie-mdm:hasTestStage ?mdmStepTestStage;
+    ie-mdm:hasTestFlow ?PlanVariantOf;
+    ie-mdm:part12NC ?PART_12NC.
+BIND( EXISTS{
+    SERVICE <http://localhost/nxp/plm__rev> { 
+    GRAPH<urn:dydra:all> {
+	      ?PlanVariantOf a udm:TestFlow;
+		               udm:processDecomposition ?TestStep_aras.		   
+		  ?TestStep_aras a udm:TestStep;
+                        udm:processDecomposition ?mdmStepTestStage.}}} AS ?flag)
+} limit 10

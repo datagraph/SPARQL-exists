@@ -1,0 +1,18 @@
+prefix plm: <http://data.nxp.com/def/plm/>
+prefix udm: <http://data.nxp.com/def/udm/>
+
+select distinct
+  ?child
+  (?childAuthenticated1 || ?childAuthenticated2 || ?childAuthenticated3 || ?childAuthenticated4 as ?childAuthenticated)
+from <urn:dydra:all>
+where {
+  values $vendorCode {}
+  $parent plm:bom ?child .
+  bind(exists{ ?child plm:hasLocation/plm:vendorCode $vendorCode } as ?childAuthenticated1)
+  bind(exists{ ?child plm:usedProcess/plm:hasLocation/plm:vendorCode $vendorCode } as ?childAuthenticated2)
+  bind(exists{ ?child plm:usedProcess/udm:hasLocation/plm:vendorCode $vendorCode } as ?childAuthenticated3)
+  bind(exists{ ?child plm:bom [
+      a plm:Subpackage ;
+      plm:hasLocation/plm:vendorCode $vendorCode ;
+    ] } as ?childAuthenticated4)
+}

@@ -1,0 +1,5 @@
+select ?parent from <urn:dydra:all> where {
+         ?parent ?p "3400 002 01827".
+       filter exists {?gp ?x ?parent }
+}
+limit 10

@@ -1,0 +1,24 @@
+PREFIX plm: <http://data.nxp.com/def/plm/>
+PREFIX udm: <http://data.nxp.com/def/udm/>
+
+SELECT ?packingMethod
+       (IF(BOUND(?si), "Yes", "No") AS ?Packing_Method_Connected_To_SalesItem)
+       (IF(EXISTS {
+            ?obsItem plm:bom ?obsOutlinePacking ;
+                     plm:state "OBS" .
+            ?obsOutlinePacking a plm:OutlinePacking ;
+                               plm:bom ?packingMethod .
+        }, "Yes", "No") AS ?Packing_Method_Connected_To_SalesItem_OBS)
+FROM <urn:dydra:all>
+WHERE {
+  ?packingMethod a plm:PackingMethod ;
+                 plm:name ?Packing_Method_Number .
+
+  OPTIONAL {
+    ?si a plm:SalesItem ;
+        plm:bom ?outlinePacking .
+    ?outlinePacking a plm:OutlinePacking ;
+                    plm:bom ?packingMethod .
+  }
+}
+LIMIT 2

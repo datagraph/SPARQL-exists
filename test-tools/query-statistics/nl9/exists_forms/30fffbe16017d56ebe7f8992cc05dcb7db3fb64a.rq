@@ -1,0 +1,19 @@
+prefix plm: <http://data.nxp.com/def/plm/>
+prefix udm: <http://data.nxp.com/def/udm/>
+
+select distinct ?child
+ (exists{
+    {
+      ?child plm:hasLocation/plm:vendorCode ?_vendorCode .
+    } union {
+      ?child plm:usedProcess/plm:hasLocation/plm:vendorCode ?_vendorCode .
+    } union {
+      ?child plm:usedProcess/udm:hasLocation/plm:vendorCode ?_vendorCode .
+    }
+  } as ?childAuthenticated)
+from <urn:dydra:all>
+where {
+  values ?_vendorCode {"10024303"}
+  <http://data.nxp.com/id/plm/icft/340000153241> plm:bom ?child .
+  #bind((?_vendorCode in $vendorCodes) as ?childAuthenticated)
+}
