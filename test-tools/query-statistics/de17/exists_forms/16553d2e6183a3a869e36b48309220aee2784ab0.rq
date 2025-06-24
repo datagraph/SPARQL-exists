@@ -1,0 +1,8 @@
+PREFIX : <http://example/>
+
+SELECT *
+FROM <http://www.w3c.org/exists-bnodes/data2>
+{
+   :s :p1 ?o .
+   FILTER EXISTS { :s :p2 ?o }
+}

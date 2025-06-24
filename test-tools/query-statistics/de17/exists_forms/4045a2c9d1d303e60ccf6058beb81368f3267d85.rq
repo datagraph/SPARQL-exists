@@ -1,0 +1,12 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+prefix birt: <http://example.org/birt/terms#>
+prefix link: <tag:net.metreeca,2016:link/terms#>
+	prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+	select ?value ('error' as ?level) ('missing rdf:first' as ?message) { 
+
+	    filter  exists { ?value rdf:value 'kjhkjhk' } 
+
+	    } values ?value {
+	        <http://example.com/birt/x>
+}

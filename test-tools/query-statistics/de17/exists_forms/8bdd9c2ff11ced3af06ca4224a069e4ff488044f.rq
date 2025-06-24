@@ -1,0 +1,9 @@
+SELECT ?v
+FROM <http://www.w3c.org/exists-filter/empty>
+WHERE {
+  BIND ( <ex:a> AS ?v )
+  FILTER EXISTS {
+     SELECT ?v WHERE {
+        FILTER (?v = <ex:a>)
+  } }
+}

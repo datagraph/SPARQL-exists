@@ -1,0 +1,1 @@
+SELECT * WHERE{FILTER EXISTS { '' ?x ''.}} LIMIT 1

@@ -1,0 +1,23 @@
+SELECT (COUNT(DISTINCT ?type) AS ?classes) {
+  
+  ?n a ?type .
+  FILTER EXISTS {
+    {
+      BIND (?n AS ?s)
+      
+      ?s ?p ?o .
+      
+    } UNION {
+      BIND (?n AS ?p)
+      
+      ?s ?p ?o .
+      
+    } UNION {
+      BIND (?n AS ?o)
+      
+      ?s ?p ?o .
+      
+    }
+  }
+  
+}

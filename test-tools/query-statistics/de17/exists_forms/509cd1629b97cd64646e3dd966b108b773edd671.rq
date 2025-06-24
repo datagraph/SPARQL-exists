@@ -1,0 +1,22 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX schema: <http://schema.org/>
+
+SELECT ?name ?subClass
+WHERE {
+  {?subClass rdfs:subClassOf schema:Thing;
+				rdfs:label ?name.
+	}
+	UNION
+	{?subClass rdfs:subClassOf/rdfs:subClassOf schema:Thing;
+				rdfs:label ?name.
+	}
+	
+	FILTER EXISTS{
+    ?subClass rdfs:subClassOf/rdfs:subClassOf schema:Thing.
+	}
+FILTER EXISTS{
+    ?subClass rdfs:subClassOf schema:Thing.
+  }
+
+}ORDER BY ?name

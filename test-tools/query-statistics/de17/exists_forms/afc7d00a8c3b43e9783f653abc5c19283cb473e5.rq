@@ -1,0 +1,16 @@
+PREFIX daq:<http://purl.org/eis/vocab/daq#>
+PREFIX sdmx-dimension:<http://purl.org/linked-data/sdmx/2009/dimension#>
+
+SELECT DISTINCT ?metric ?value {
+  ?obs a daq:Observation .
+  ?obs daq:metric ?metric_instance .
+	?obs daq:value ?value .
+	?obs sdmx-dimension:timePeriod ?dateTime .
+  ?metric_instance a ?metric .
+
+  FILTER EXISTS {
+        ?obs2 daq:metric ?metric_instance .
+        ?obs2 sdmx-dimension:timePeriod ?newerDateTime  .
+      	FILTER (?newerDateTime > ?dateTime) 
+	} 
+}

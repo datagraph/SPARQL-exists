@@ -1,0 +1,9 @@
+prefix : <http://www.example.org/>
+
+SELECT ?x
+FROM <http://www.w3c.org/exists-pfps/existsbpb>
+WHERE {
+  ?x :p :y .
+  FILTER EXISTS { VALUES (?x) { ( :c ) }
+  	 	  VALUES (?y) { ( :d ) } }
+}

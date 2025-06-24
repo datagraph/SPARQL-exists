@@ -1,0 +1,8 @@
+prefix ex: <http://www.example.org/>
+
+select *
+FROM <http://www.w3c.org/exists-sparql11/exists01>
+where {
+?s ?p ?o
+filter exists {?s ?p ex:o}
+}

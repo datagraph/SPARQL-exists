@@ -1,0 +1,60 @@
+PREFIX   :   <http://rat.io/>
+PREFIX ng:   <http://rdf.ng/>
+SELECT DISTINCT 
+    ?graph ?prop ?val ?provenance ?attribution 
+
+FROM <urn:dydra:all>
+FROM NAMED <urn:dydra:named>
+
+WHERE {   
+    BIND (:g AS ?graph) .                   # Bind the target graph
+    { SELECT ?graph ?nesting WHERE {
+        ?graph ng:in* ?path .
+        ?path ng:in+ ?nesting .
+    }}
+
+    # SG    annotations on that graph directly in the Same Graph
+    #       for :g  g:glossy  g:green  
+    OPTIONAL {
+        GRAPH ?SGgraph { ?SGgraph ?SGprop ?SGval . }
+        FILTER ( ?SGgraph = ?graph)
+        BIND ( ?SGprop AS ?prop )
+        BIND ( ?SGval AS ?val )
+        BIND ( ?SGgraph AS ?provenance )
+        BIND ( ng:direct AS ?attribution)
+    }
+    # NG    direct annotations on that graph in Nesting Graphs
+    #       for :g  h_gally  i_giddy  k_great
+    OPTIONAL {
+        GRAPH ?nesting { ?graph ?NGprop ?NGval . }
+        FILTER ( ?prop != ng:in )
+        FILTER EXISTS { ?graph ng:in* ?nesting . }
+        BIND ( ?NGprop AS ?prop )
+        BIND ( ?NGval AS ?val )
+        BIND ( ?nesting AS ?provenance )
+        BIND ( ng:indirect AS ?attribution )
+    }
+
+    # OG    direct annotations on that graph in Other Graphs  
+    #       for :g  m_gold
+#   OPTIONAL {
+#       GRAPH ?OGprovenance { ?graph ?OGprop ?OGval . }
+#       FILTER NOT EXISTS { ?graph ng:in* ?OGprovenance . }
+#       FILTER (?OGprovenance != ?graph)   # Skip self-provenance
+#       BIND (?OGprop AS ?prop)
+#       BIND (?OGval AS ?val)
+#       BIND (?OGprovenance AS ?provenance)
+#       BIND (ng:exdirect AS ?attribution)
+#   }
+
+    # WG    annotations inherited from and Within nesting Graphs
+    #       for :g  kaput
+
+    # EG    annotations inherited from and External to nesting Graphs
+    #       for :g  m_kursed
+
+
+    # TODO  don't remember what this was meant to do
+    # bind ( <urn:nesting:default> AS ?attribution)
+}
+ORDER BY ?graph ?provenance ?attribution ?val ?prop

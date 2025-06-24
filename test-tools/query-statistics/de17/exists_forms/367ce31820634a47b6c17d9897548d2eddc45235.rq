@@ -1,0 +1,43 @@
+PREFIX   :   <http://rat.io/>
+PREFIX ng:   <http://rdf.ng/>
+
+SELECT DISTINCT 
+    ?graph ?prop ?val ?provenance ?attribution 
+
+from <urn:dydra:all>
+from named <urn:dydra:named>
+WHERE {
+    # Bind the graph
+    BIND (:g AS ?graph) .
+
+    # Integrate the subquery as part of the main query
+    {
+        SELECT ?graph ?nesting WHERE {
+            ?graph ng:in* ?path .
+            ?path ng:in+ ?nesting .
+        }
+    }
+
+    # Join ?nesting with the rest of the query
+    OPTIONAL {
+        GRAPH ?OGprovenance {
+            ?graph ?OGprop ?OGval .
+        }
+        BIND (?OGprop AS ?prop)
+        BIND (?OGval AS ?val)
+        BIND (?OGprovenance AS ?provenance)
+        BIND (ng:exdirect AS ?attribution)
+
+        # Filters using ?nesting
+        FILTER (?OGprovenance != ?nesting)
+        FILTER (?provenance != ?graph)
+        FILTER (?prop != ng:in)
+    }
+
+    # Ensure proper join of ?nesting
+    FILTER EXISTS {
+        ?graph ng:in* ?path .
+        ?path ng:in+ ?nesting .
+    }
+} 
+ORDER BY ?graph ?nesting ?attribution ?provenance ?val ?prop

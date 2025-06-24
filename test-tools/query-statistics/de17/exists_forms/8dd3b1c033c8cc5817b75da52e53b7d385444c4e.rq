@@ -1,0 +1,8 @@
+PREFIX : <http://example/>
+
+SELECT ?x
+FROM <http://www.w3c.org/exists-4-minus/data>
+WHERE {
+    ?x :p :c .
+    FILTER EXISTS { ?x :p :c . MINUS { ?x :p :c . } }
+}

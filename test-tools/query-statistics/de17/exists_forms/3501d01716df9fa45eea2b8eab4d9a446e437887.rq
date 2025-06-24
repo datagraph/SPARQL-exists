@@ -1,0 +1,32 @@
+# tuples @ http://dydra.com/alexgarciac/test-pubrdf/sparql
+
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+
+select
+
+    ?0 ?0_label
+
+where {
+
+    { select distinct ?0 ?0_label where {
+
+        ?0 <http://purl.org/ao/core/annotatesResource> ?1 .
+
+        filter exists { ?1 a ?2 }
+
+        optional { ?0 rdfs:label ?0_label_0 filter (lang(?0_label_0) = '') }
+        optional { ?0 rdfs:label ?0_label_1 filter (lang(?0_label_1) = 'en') }
+
+        bind(coalesce(?0_label_0, ?0_label_1) as ?0_label)
+
+    } limit 100000 }
+
+}
+
+order by
+
+    asc(str(ucase(?0_label))) asc(?0)
+
+limit 1000

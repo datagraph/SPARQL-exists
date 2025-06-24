@@ -1,0 +1,13 @@
+select *
+{ BIND (1 as ?x) 
+ FILTER EXISTS {
+  # Uncomment optional block to correct
+  #  OPTIONAL {
+  #    <http://does.not.exist> <http://does.not.exist>  ?x
+  # }
+  bind(2 as ?y)
+ 	FILTER EXISTS {
+  		FILTER (?x = 1) 
+ 	}
+ }
+}

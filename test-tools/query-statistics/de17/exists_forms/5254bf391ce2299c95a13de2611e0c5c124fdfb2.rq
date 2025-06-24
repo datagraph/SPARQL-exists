@@ -1,0 +1,8 @@
+PREFIX sdo: <http://schema.org/>
+SELECT  * WHERE  {
+  ?s ?p ?o.
+  FILTER EXISTS { sdo:PhysicalExam ?p ?o }
+
+}
+
+LIMIT 1000
